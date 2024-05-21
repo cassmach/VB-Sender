@@ -27,7 +27,7 @@ Um sistema de tickets extremamente completo baseado em mensagens do WhatsApp, qu
 ## 💿 Instalação
 
 ```bash
-  apt update && apt upgrade -y && apt install sudo git -y && sudo rm -rf WhaticketPlus && sudo git clone https://github.com/cassmach/VB-Sender && cd WhaticketPlus && sudo chmod +x ./whaticketplus && ./whaticketplus
+  apt update && apt upgrade -y && apt install sudo git -y && sudo rm -rf vbsender && sudo git clone https://github.com/cassmach/VB-Sender && cd vbsender && sudo chmod +x ./vbsender && ./vbsender
 ```
 
 <br /><br />
