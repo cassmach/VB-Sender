@@ -6,7 +6,7 @@
 <p>Ubuntu 20.04</p>
 <p>Debian 11</p>
 
-<code>apt update && apt upgrade -y && apt install sudo git -y && sudo rm -rf Whaticket-Saas-Completo && sudo git clone https://github.com/andrew890074/Whaticket-Saas-Completo.git && cd Whaticket-Saas-Completo && sudo chmod +x ./automatizaai && ./automatizaai</code><br />
+<code>apt update && apt upgrade -y && apt install sudo git -y && sudo rm -rf VB-Sender && sudo git clone https://github.com/cassmach/VB-Sender.git && cd VB-Sender && sudo chmod +x ./vbsender && ./vbsender</code><br />
 &nbsp;</p>
 
 <h3>Whatsapp Suporte:<h3>
