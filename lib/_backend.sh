@@ -14,7 +14,7 @@ backend_redis_create() {
   sleep 2
 
   sudo su - root <<EOF
-  usermod -aG docker deployautomatizaai
+  usermod -aG docker deployvbsender
   docker run --name redis-redis -p 6379:6379 --restart always --detach redis redis-server --requirepass ${db_pass}
   
 EOF
@@ -45,8 +45,8 @@ backend_set_env() {
   frontend_url=${frontend_url%%/*}
   frontend_url=https://$frontend_url
 
-sudo su - deployautomatizaai << EOF
-  cat <<[-]EOF > /home/deployautomatizaai/whaticket/backend/.env
+sudo su - deployvbsender << EOF
+  cat <<[-]EOF > /home/deployvbsender/whaticket/backend/.env
 NODE_ENV=
 
 # VARIÁVEIS DE SISTEMA
@@ -62,7 +62,7 @@ DB_DIALECT=postgres
 DB_HOST=localhost
 DB_USER=postgres
 DB_PASS=2000@23
-DB_NAME=whaticketautomatizaai
+DB_NAME=vbsender
 DB_PORT=5432
 DB_DEBUG=false
 DB_BACKUP=/www/wwwroot/backup
@@ -81,7 +81,7 @@ ENV_TOKEN=
 WHATSAPP_UNREADS=
 
 # FACEBOOK/INSTAGRAM CONFIGS
-VERIFY_TOKEN=Whaticket
+VERIFY_TOKEN=vbsender
 FACEBOOK_APP_ID=
 FACEBOOK_APP_SECRET=
 
@@ -147,8 +147,8 @@ backend_node_dependencies() {
 
   sleep 2
 
-  sudo su - deployautomatizaai <<EOF
-  cd /home/deployautomatizaai/whaticket/backend
+  sudo su - deployvbsender <<EOF
+  cd /home/deployvbsender/whaticket/backend
   npm install --force
 EOF
 
@@ -167,8 +167,8 @@ backend_db_migrate() {
 
   sleep 2
 
-  sudo su - deployautomatizaai <<EOF
-  cd /home/deployautomatizaai/whaticket/backend
+  sudo su - deployvbsender <<EOF
+  cd /home/deployvbsender/whaticket/backend
   npx sequelize db:migrate
 EOF
 
@@ -187,8 +187,8 @@ backend_db_seed() {
 
   sleep 2
 
-  sudo su - deployautomatizaai <<EOF
-  cd /home/deployautomatizaai/whaticket/backend
+  sudo su - deployvbsender <<EOF
+  cd /home/deployvbsender/whaticket/backend
   npx sequelize db:seed:all
 EOF
 
@@ -208,9 +208,9 @@ backend_start_pm2() {
 
   sleep 2
 
-  sudo su - deployautomatizaai <<EOF
-  cd /home/deployautomatizaai/whaticket/backend
-  pm2 start automatizaai/server.js --name whaticket-backend
+  sudo su - deployvbsender <<EOF
+  cd /home/deployvbsender/whaticket/backend
+  pm2 start vbsender/server.js --name whaticket-backend
 EOF
 
   sleep 2
