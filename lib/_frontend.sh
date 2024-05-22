@@ -151,9 +151,9 @@ move_whaticket_files() {
   sudo su - root <<EOF
 
 
-  sudo rm -r /home/deployvbsender/whaticket/frontend/automatizaai
+  sudo rm -r /home/deployvbsender/whaticket/frontend/vbsender
   sudo rm -r /home/deployvbsender/whaticket/frontend/package.json
-  sudo rm -r /home/deployvbsender/whaticket/backend/automatizaai
+  sudo rm -r /home/deployvbsender/whaticket/backend/vbsender
   sudo rm -r /home/deployvbsender/whaticket/backend/package.json
   sudo rm -rf /home/deployvbsender/whaticket/frontend/node_modules
   sudo rm -rf /home/deployvbsender/whaticket/backend/node_modules
