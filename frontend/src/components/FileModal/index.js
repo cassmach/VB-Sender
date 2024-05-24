@@ -82,7 +82,7 @@ const useStyles = makeStyles(theme => ({
 
 const FileListSchema = Yup.object().shape({
     name: Yup.string()
-        .min(3, "Nome muito curto")
+        .min(3, "nome muito curto")
         .required("Obrigatório"),
     message: Yup.string()
         .required("Obrigatório")

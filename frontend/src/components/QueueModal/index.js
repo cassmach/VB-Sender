@@ -13,8 +13,6 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { VisibilityOff } from '@material-ui/icons';
-
 
 import { i18n } from "../../translate/i18n";
 
@@ -71,10 +69,10 @@ const useStyles = makeStyles((theme) => ({
 
 const QueueSchema = Yup.object().shape({
   name: Yup.string()
-    .min(2, "Muito curto!")
-    .max(50, "Muito longo!")
-    .required("Obrigatório"),
-  color: Yup.string().min(3, "Muito curto!").max(9, "Muito longo!").required(),
+    .min(2, "Too Short!")
+    .max(50, "Too Long!")
+    .required("Required"),
+  color: Yup.string().min(3, "Too Short!").max(9, "Too Long!").required(),
   greetingMessage: Yup.string(),
 });
 
@@ -87,7 +85,6 @@ const QueueModal = ({ open, onClose, queueId }) => {
     greetingMessage: "",
     outOfHoursMessage: "",
     orderQueue: "",
-    chatOperator: "",
     integrationId: "",
     promptId: ""
   };
@@ -166,8 +163,8 @@ const QueueModal = ({ open, onClose, queueId }) => {
         name: "",
         color: "",
         greetingMessage: "",
+        outOfHoursMessage: "",
         orderQueue: "",
-        chatOperator: "",
         integrationId: ""
       });
     };
@@ -189,7 +186,7 @@ const QueueModal = ({ open, onClose, queueId }) => {
           ...values, schedules, promptId: selectedPrompt ? selectedPrompt : null
         });
       }
-      toast.success("Fila salva com sucesso!");
+      toast.success("Queue saved successfully");
       handleClose();
     } catch (err) {
       toastError(err);
@@ -312,19 +309,6 @@ const QueueModal = ({ open, onClose, queueId }) => {
                       margin="dense"
                       className={classes.textField1}
                     />
-                    <Field
-                      as={TextField}
-                      label={i18n.t("queueModal.form.chatOperator")}
-                      name="chatOperator"
-                      type="chatOperator"
-                      error={touched.chatOperator && Boolean(errors.chatOperator)}
-                      helperText={touched.chatOperator && errors.chatOperator}
-                      variant="outlined"
-                      margin="dense"
-                      color="red"
-                      className={classes.textField1}
-                      
-                    />
                     <div>
                       <FormControl
                         variant="outlined"
@@ -418,6 +402,7 @@ const QueueModal = ({ open, onClose, queueId }) => {
                           label={i18n.t("queueModal.form.outOfHoursMessage")}
                           type="outOfHoursMessage"
                           multiline
+                          inputRef={greetingRef}
                           rows={5}
                           fullWidth
                           name="outOfHoursMessage"

@@ -39,7 +39,6 @@ const useStyles = makeStyles((theme) => ({
     ...theme.scrollbarStyles,
   },
   listItem: {
-    borderTop: '1px solid #c0c0c0',
     cursor: "pointer",
   },
 }));
@@ -110,8 +109,7 @@ export default function ChatList({
 
   const getItemStyle = (chat) => {
     return {
-      borderLeft: chat.uuid === id ? "6px solid #6517AB" : null,
-      borderBottom: "1px solid #eee",
+      borderLeft: chat.uuid === id ? "6px solid #002d6e" : null,
       backgroundColor: chat.uuid === id ? "theme.palette.chatlist" : null,
     };
   };

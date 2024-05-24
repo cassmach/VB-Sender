@@ -6,7 +6,6 @@ import Board from 'react-trello';
 import { toast } from "react-toastify";
 import { i18n } from "../../translate/i18n";
 import { useHistory } from 'react-router-dom';
-import { socketConnection } from "../../services/socket";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -15,10 +14,9 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
   },
   button: {
-    background: "#6517AB",
+    background: "#10a110",
     border: "none",
     padding: "10px",
-    cursor: 'pointer',
     color: "white",
     fontWeight: "bold",
     borderRadius: "5px",
@@ -135,7 +133,7 @@ const Kanban = () => {
                 <button 
                   className={classes.button} 
                   onClick={() => {
-                    console.log(ticket.uuid)
+                    
                     handleCardClick(ticket.uuid)
                   }}>
                     Ver Ticket

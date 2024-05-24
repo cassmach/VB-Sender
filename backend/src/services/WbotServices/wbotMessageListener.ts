@@ -327,6 +327,7 @@ export const getBodyMessage = (msg: proto.IWebMessageInfo): string | null => {
 
     const types = {
       conversation: msg?.message?.conversation,
+	  editedMessage: msg?.message?.editedMessage?.message?.protocolMessage?.editedMessage?.conversation,
       imageMessage: msg.message?.imageMessage?.caption,
       videoMessage: msg.message?.videoMessage?.caption,
       extendedTextMessage: msg.message?.extendedTextMessage?.text,
@@ -842,6 +843,7 @@ const verifyMediaMessage = async (
   }
 
   const body = getBodyMessage(msg);
+  
 
   const messageData = {
     id: msg.key.id,
@@ -878,13 +880,16 @@ const verifyMediaMessage = async (
       ],
     });
 
-    io.to("closed").emit(`company-${ticket.companyId}-ticket`, {
-      action: "delete",
-      ticket,
-      ticketId: ticket.id,
-    });
+    io.to(`company-${ticket.companyId}-closed`)
+      .to(`queue-${ticket.queueId}-closed`)
+      .emit(`company-${ticket.companyId}-ticket`, {
+        action: "delete",
+        ticket,
+        ticketId: ticket.id,
+      });
 
-    io.to(ticket.status)
+    io.to(`company-${ticket.companyId}-${ticket.status}`)
+      .to(`queue-${ticket.queueId}-${ticket.status}`)
       .to(ticket.id.toString())
       .emit(`company-${ticket.companyId}-ticket`, {
         action: "update",
@@ -904,9 +909,10 @@ export const verifyMessage = async (
   const io = getIO();
   const quotedMsg = await verifyQuotedMessage(msg);
   const body = getBodyMessage(msg);
+  const isEdited = getTypeMessage(msg) == 'editedMessage';
 
   const messageData = {
-    id: msg.key.id,
+    id: isEdited ? msg?.message?.editedMessage?.message?.protocolMessage?.key?.id : msg.key.id,
     ticketId: ticket.id,
     contactId: msg.key.fromMe ? undefined : contact.id,
     body,
@@ -917,7 +923,8 @@ export const verifyMessage = async (
     ack: msg.status,
     remoteJid: msg.key.remoteJid,
     participant: msg.key.participant,
-    dataJson: JSON.stringify(msg)
+    dataJson: JSON.stringify(msg),
+	isEdited: isEdited,
   };
 
   await ticket.update({
@@ -936,14 +943,16 @@ export const verifyMessage = async (
       ]
     });
 
-    io.to("closed").emit(`company-${ticket.companyId}-ticket`, {
-      action: "delete",
-      ticket,
-      ticketId: ticket.id
-    });
+    io.to(`company-${ticket.companyId}-closed`)
+      .to(`queue-${ticket.queueId}-closed`)
+      .emit(`company-${ticket.companyId}-ticket`, {
+        action: "delete",
+        ticket,
+        ticketId: ticket.id
+      });
 
-    io.to(ticket.status)
-      .to(ticket.id.toString())
+    io.to(`company-${ticket.companyId}-${ticket.status}`)
+      .to(`queue-${ticket.queueId}-${ticket.status}`)
       .emit(`company-${ticket.companyId}-ticket`, {
         action: "update",
         ticket,
@@ -963,6 +972,7 @@ const isValidMsg = (msg: proto.IWebMessageInfo): boolean => {
     const ifType =
       msgType === "conversation" ||
       msgType === "extendedTextMessage" ||
+	  msgType === "editedMessage" ||
       msgType === "audioMessage" ||
       msgType === "videoMessage" ||
       msgType === "imageMessage" ||
@@ -1021,6 +1031,25 @@ const verifyQueue = async (
 
 
   if (queues.length === 1) {
+
+    const sendGreetingMessageOneQueues = await Setting.findOne({
+      where: {
+        key: "sendGreetingMessageOneQueues",
+        companyId: ticket.companyId
+      }
+    });
+
+    if (greetingMessage.length > 1 && sendGreetingMessageOneQueues?.value === "enabled") {
+      const body = formatBody(`${greetingMessage}`, contact);
+
+      await wbot.sendMessage(
+        `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+        {
+          text: body
+        }
+      );
+    }
+
     const firstQueue = head(queues);
     let chatbot = false;
     if (firstQueue?.options) {
@@ -1063,7 +1092,7 @@ const verifyQueue = async (
     }
 
     await UpdateTicketService({
-      ticketData: { queueId: firstQueue?.id, chatbot },
+      ticketData: { queueId: firstQueue.id, chatbot, status: "pending" },
       ticketId: ticket.id,
       companyId: ticket.companyId,
     });
@@ -1288,13 +1317,16 @@ export const handleRating = async (
     status: "closed",
   });
 
-  io.to("open").emit(`company-${ticket.companyId}-ticket`, {
-    action: "delete",
-    ticket,
-    ticketId: ticket.id,
-  });
+  io.to(`company-${ticket.companyId}-open`)
+    .to(`queue-${ticket.queueId}-open`)
+    .emit(`company-${ticket.companyId}-ticket`, {
+      action: "delete",
+      ticket,
+      ticketId: ticket.id,
+    });
 
-  io.to(ticket.status)
+  io.to(`company-${ticket.companyId}-${ticket.status}`)
+    .to(`queue-${ticket.queueId}-${ticket.status}`)
     .to(ticket.id.toString())
     .emit(`company-${ticket.companyId}-ticket`, {
       action: "update",
@@ -1455,7 +1487,7 @@ const handleChartbot = async (ticket: Ticket, msg: WAMessage, wbot: Session, don
       queueOptions.forEach((option, i) => {
         options += `*[ ${option.option} ]* - ${option.title}\n`;
       });
-      options += `\n*[ 0 ]* - Menu anterior`;
+      //options += `\n*[ 0 ]* - Menu anterior`;
       options += `\n*[ # ]* - Menu inicial`;
 
       const textMessage = {
@@ -2201,13 +2233,16 @@ const verifyCampaignMessageAndCloseTicket = async (
     const ticket = await Ticket.findByPk(messageRecord.ticketId);
     await ticket.update({ status: "closed" });
 
-    io.to("open").emit(`company-${ticket.companyId}-ticket`, {
-      action: "delete",
-      ticket,
-      ticketId: ticket.id,
-    });
+    io.to(`company-${ticket.companyId}-open`)
+      .to(`queue-${ticket.queueId}-open`)
+      .emit(`company-${ticket.companyId}-ticket`, {
+        action: "delete",
+        ticket,
+        ticketId: ticket.id,
+      });
 
-    io.to(ticket.status)
+    io.to(`company-${ticket.companyId}-${ticket.status}`)
+      .to(`queue-${ticket.queueId}-${ticket.status}`)
       .to(ticket.id.toString())
       .emit(`company-${ticket.companyId}-ticket`, {
         action: "update",

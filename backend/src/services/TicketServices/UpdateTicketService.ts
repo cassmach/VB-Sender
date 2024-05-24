@@ -123,14 +123,15 @@ const UpdateTicketService = async ({
           const ratingTxt = ratingMessage || "";
           let bodyRatingMessage = `\u200e${ratingTxt}\n\n`;
           bodyRatingMessage +=
-          "O que você achou do atendimento que acabou de receber?\n\nAplique uma nota entre 1 e 5, vamos lá?\n\n*1* - Muito Insatisfeito 😠\n*2* - Insatisfeito ☹️\n*3* - Indiferente 😐\n*4* - Satisfeito 😃\n*5* - Muito satisfeito 😁\n";
+            "Digite de 1 à 3 para qualificar nosso atendimento:\n*1* - _Insatisfeito_\n*2* - _Satisfeito_\n*3* - _Muito Satisfeito_\n\n";
           await SendWhatsAppMessage({ body: bodyRatingMessage, ticket });
 
           await ticketTraking.update({
             ratingAt: moment().toDate()
           });
 
-          io.to("open")
+          io.to(`company-${ticket.companyId}-open`)
+            .to(`queue-${ticket.queueId}-open`)
             .to(ticketId.toString())
             .emit(`company-${ticket.companyId}-ticket`, {
               action: "delete",
@@ -266,15 +267,22 @@ const UpdateTicketService = async ({
 
     if (ticket.status !== oldStatus || ticket.user?.id !== oldUserId) {
 
-      io.to(oldStatus).emit(`company-${companyId}-ticket`, {
-        action: "delete",
-        ticketId: ticket.id
-      });
+      io.to(`company-${companyId}-${oldStatus}`)
+        .to(`queue-${ticket.queueId}-${oldStatus}`)
+        .to(`user-${oldUserId}`)
+        .emit(`company-${companyId}-ticket`, {
+          action: "delete",
+          ticketId: ticket.id
+        });
     }
 
-    io.to(ticket.status)
-      .to("notification")
+    io.to(`company-${companyId}-${ticket.status}`)
+      .to(`company-${companyId}-notification`)
+      .to(`queue-${ticket.queueId}-${ticket.status}`)
+      .to(`queue-${ticket.queueId}-notification`)
       .to(ticketId.toString())
+      .to(`user-${ticket?.userId}`)
+      .to(`user-${oldUserId}`)
       .emit(`company-${companyId}-ticket`, {
         action: "update",
         ticket

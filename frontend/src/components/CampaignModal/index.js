@@ -74,12 +74,9 @@ const useStyles = makeStyles((theme) => ({
 
 const CampaignSchema = Yup.object().shape({
   name: Yup.string()
-    .min(2, "Muito curto!")
-    .max(50, "Muito longo!")
-    .required("Obrigatório"),
-  contactListId: Yup.string().required("Obrigatório"),
-  whatsappId: Yup.string().required("Obrigatório"),
-  scheduledAt: Yup.date().required("Obrigatório"),
+    .min(2, "Too Short!")
+    .max(50, "Too Long!")
+    .required("Required"),
 });
 
 const CampaignModal = ({
@@ -286,7 +283,7 @@ const CampaignModal = ({
         placeholder={i18n.t("campaigns.dialog.form.messagePlaceholder")}
         multiline={true}
         variant="outlined"
-        helperText="Utilize variáveis como {nome}, {numero}, {email} ou defina variáveis personalizadas."
+        helperText="Utilize variáveis como {nome}, {numero}, {email} ou defina variáveis personalziadas."
         disabled={!campaignEditable && campaign.status !== "CANCELADA"}
       />
     );
@@ -725,8 +722,7 @@ const CampaignModal = ({
                     {i18n.t("campaigns.dialog.buttons.cancel")}
                   </Button>
                 )}
-                {/* Remove o código de anexar arquivo, pois já tem o botão */}
-                {/* {!attachment && !campaign.mediaPath && campaignEditable && (
+                {!attachment && !campaign.mediaPath && campaignEditable && (
                   <Button
                     color="primary"
                     onClick={() => attachmentFile.current.click()}
@@ -735,7 +731,7 @@ const CampaignModal = ({
                   >
                     {i18n.t("campaigns.dialog.buttons.attach")}
                   </Button>
-                )} */}
+                )}
                 <Button
                   onClick={handleClose}
                   color="secondary"

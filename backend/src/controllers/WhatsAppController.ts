@@ -20,8 +20,10 @@ interface WhatsappData {
   status?: string;
   isDefault?: boolean;
   token?: string;
-  sendIdQueue?: number;
-  timeSendQueue?: number;
+  //sendIdQueue?: number;
+  //timeSendQueue?: number;
+  transferQueueId?: number;
+  timeToTransfer?: number;  
   promptId?: number;
   maxUseBotQueues?: number;
   timeUseBotQueues?: number;
@@ -51,8 +53,10 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     outOfHoursMessage,
     queueIds,
     token,
-    timeSendQueue,
-    sendIdQueue,
+    //timeSendQueue,
+    //sendIdQueue,
+	transferQueueId,
+	timeToTransfer,
     promptId,
     maxUseBotQueues,
     timeUseBotQueues,
@@ -71,8 +75,10 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     queueIds,
     companyId,
     token,
-    timeSendQueue,
-    sendIdQueue,
+    //timeSendQueue,
+    //sendIdQueue,
+	transferQueueId,
+	timeToTransfer,	
     promptId,
     maxUseBotQueues,
     timeUseBotQueues,
@@ -83,13 +89,13 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
   StartWhatsAppSession(whatsapp, companyId);
 
   const io = getIO();
-  io.emit(`company-${companyId}-whatsapp`, {
+  io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-whatsapp`, {
     action: "update",
     whatsapp
   });
 
   if (oldDefaultWhatsapp) {
-    io.emit(`company-${companyId}-whatsapp`, {
+    io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-whatsapp`, {
       action: "update",
       whatsapp: oldDefaultWhatsapp
     });
@@ -123,13 +129,13 @@ export const update = async (
   });
 
   const io = getIO();
-  io.emit(`company-${companyId}-whatsapp`, {
+  io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-whatsapp`, {
     action: "update",
     whatsapp
   });
 
   if (oldDefaultWhatsapp) {
-    io.emit(`company-${companyId}-whatsapp`, {
+    io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-whatsapp`, {
       action: "update",
       whatsapp: oldDefaultWhatsapp
     });
@@ -151,7 +157,7 @@ export const remove = async (
   removeWbot(+whatsappId);
 
   const io = getIO();
-  io.emit(`company-${companyId}-whatsapp`, {
+  io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-whatsapp`, {
     action: "delete",
     whatsappId: +whatsappId
   });

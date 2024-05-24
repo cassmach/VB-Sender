@@ -9,7 +9,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import toastError from "../../errors/toastError";
 import Popover from "@material-ui/core/Popover";
 import ForumIcon from "@material-ui/icons/Forum";
-import { Tooltip } from "@material-ui/core";
 import {
   Badge,
   IconButton,
@@ -21,12 +20,13 @@ import {
 } from "@material-ui/core";
 import api from "../../services/api";
 import { isArray } from "lodash";
-import { socketConnection } from "../../services/socket";
+import { SocketContext } from "../../context/Socket/SocketContext";
 import { useDate } from "../../hooks/useDate";
 import { AuthContext } from "../../context/Auth/AuthContext";
 
 import notifySound from "../../assets/chat_notify.mp3";
 import useSound from "use-sound";
+import { i18n } from "../../translate/i18n";
 
 const useStyles = makeStyles((theme) => ({
   mainPaper: {
@@ -111,6 +111,8 @@ export default function ChatPopover() {
   const [play] = useSound(notifySound);
   const soundAlertRef = useRef();
 
+  const socketManager = useContext(SocketContext);
+
   useEffect(() => {
     soundAlertRef.current = play;
 
@@ -137,12 +139,17 @@ export default function ChatPopover() {
 
   useEffect(() => {
     const companyId = localStorage.getItem("companyId");
-    const socket = socketConnection({ companyId });
-
+    const socket = socketManager.getSocket(companyId);
+    if (!socket) {
+      return () => {}; 
+    }
+    
     socket.on(`company-${companyId}-chat`, (data) => {
       if (data.action === "new-message") {
         dispatch({ type: "CHANGE_CHAT", payload: data });
-        if (data.newMessage.senderId !== user.id) {
+        const userIds = data.newMessage.chat.users.map(userObj => userObj.userId);
+
+        if (userIds.includes(user.id) && data.newMessage.senderId !== user.id) {
           soundAlertRef.current();
         }
       }
@@ -153,8 +160,7 @@ export default function ChatPopover() {
     return () => {
       socket.disconnect();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [socketManager, user.id]);
 
   useEffect(() => {
     let unreadsCount = 0;
@@ -217,7 +223,6 @@ export default function ChatPopover() {
 
   return (
     <div>
-      <Tooltip title="Chat Interno" placement="bottom">
       <IconButton
         aria-describedby={id}
         variant="contained"
@@ -229,7 +234,6 @@ export default function ChatPopover() {
           <ForumIcon />
         </Badge>
       </IconButton>
-      </Tooltip>
       <Popover
         id={id}
         open={open}
@@ -259,6 +263,7 @@ export default function ChatPopover() {
                 <ListItem
                   key={key}
                   style={{
+                    background: key % 2 === 0 ? "#ededed" : "white",
                     border: "1px solid #eee",
                     cursor: "pointer",
                   }}
@@ -279,7 +284,7 @@ export default function ChatPopover() {
                 </ListItem>
               ))}
             {isArray(chats) && chats.length === 0 && (
-              <ListItemText primary="Nenhum registro" />
+              <ListItemText primary={i18n.t("mainDrawer.appBar.notRegister")} />
             )}
           </List>
         </Paper>

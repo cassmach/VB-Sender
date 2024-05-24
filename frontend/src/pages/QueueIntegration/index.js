@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useReducer, useContext } from "react";
 import { toast } from "react-toastify";
-import { socketConnection } from "../../services/socket";
+import { SocketContext } from "../../context/Socket/SocketContext";
 import n8n from "../../assets/n8n.png";
 import dialogflow from "../../assets/dialogflow.png";
 import webhooks from "../../assets/webhook.png";
@@ -121,6 +121,8 @@ const QueueIntegration = () => {
   const companyId = user.companyId;
   const history = useHistory();
 
+  const socketManager = useContext(SocketContext);
+
   useEffect(() => {
     async function fetchData() {
       const planConfigs = await getPlanCompany(undefined, companyId);
@@ -162,7 +164,7 @@ const QueueIntegration = () => {
 
   useEffect(() => {
     const companyId = localStorage.getItem("companyId");
-    const socket = socketConnection({ companyId });
+    const socket = socketManager.getSocket(companyId);
 
     socket.on(`company-${companyId}-queueIntegration`, (data) => {
       if (data.action === "update" || data.action === "create") {
@@ -177,7 +179,7 @@ const QueueIntegration = () => {
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [socketManager]);
 
   const handleOpenUserModal = () => {
     setSelectedIntegration(null);
@@ -253,7 +255,7 @@ const QueueIntegration = () => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon style={{ color: "gray" }} />
+                  <SearchIcon color="secondary" />
                 </InputAdornment>
               ),
             }}
@@ -278,7 +280,6 @@ const QueueIntegration = () => {
               <TableCell padding="checkbox"></TableCell>
               <TableCell align="center">{i18n.t("queueIntegration.table.id")}</TableCell>
               <TableCell align="center">{i18n.t("queueIntegration.table.name")}</TableCell>
-              <TableCell align="center">{i18n.t("Ações")}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -303,7 +304,7 @@ const QueueIntegration = () => {
                       size="small"
                       onClick={() => handleEditIntegration(integration)}
                     >
-                      <Edit />
+                      <Edit color="secondary" />
                     </IconButton>
 
                     <IconButton
@@ -313,7 +314,7 @@ const QueueIntegration = () => {
                         setDeletingUser(integration);
                       }}
                     >
-                      <DeleteOutline />
+                      <DeleteOutline color="secondary" />
                     </IconButton>
                   </TableCell>
                 </TableRow>

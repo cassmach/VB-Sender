@@ -6,8 +6,6 @@ import List from "@material-ui/core/List";
 import { makeStyles } from "@material-ui/core/styles";
 import VolumeUpIcon from "@material-ui/icons/VolumeUp";
 import VolumeDownIcon from "@material-ui/icons/VolumeDown";
-import { Tooltip } from "@material-ui/core";
-
 
 import { Grid, Slider } from "@material-ui/core";
 
@@ -57,18 +55,16 @@ const NotificationsVolume = ({ volume, setVolume }) => {
 
     return (
         <>
-            <Tooltip title="Volume" placement="bottom">
-                <IconButton
-                    className={classes.icons}
-                    onClick={handleClick}
-                    ref={anchorEl}
-                    aria-label="Open Notifications"
-                    // color="inherit"
-                    // color="secondary"
-                >
-                    <VolumeUpIcon color="inherit" />
-                </IconButton>
-            </Tooltip>
+            <IconButton
+                className={classes.icons}
+                onClick={handleClick}
+                ref={anchorEl}
+                aria-label="Open Notifications"
+                // color="inherit"
+                // color="secondary"
+            >
+                <VolumeUpIcon color="inherit" />
+            </IconButton>
             <Popover
                 disableScrollLock
                 open={isOpen}

@@ -39,8 +39,8 @@ const useStyles = makeStyles((theme) => ({
 
 const NoteSchema = Yup.object().shape({
 	note: Yup.string()
-		.min(2, "Muito longo!")
-		.required("Obrigatório")
+		.min(2, "Too Short!")
+		.required("Required")
 });
 export function ContactNotes ({ ticket }) {
     const { id: ticketId, contactId } = ticket

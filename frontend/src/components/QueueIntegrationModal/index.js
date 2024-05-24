@@ -64,9 +64,9 @@ const useStyles = makeStyles((theme) => ({
 
 const DialogflowSchema = Yup.object().shape({
   name: Yup.string()
-    .min(2, "Muito curto!")
-    .max(50, "Muito longo!")
-    .required("Obrigatório"),
+    .min(2, "Too Short!")
+    .max(50, "Too Long!")
+    .required("Required"),
   // projectName: Yup.string()
   //   .min(3, "Too Short!")
   //   .max(100, "Too Long!")
@@ -447,11 +447,7 @@ const QueueIntegration = ({ open, onClose, integrationId }) => {
                             className={classes.textField}
                           />
                         </Grid>
-                        <Grid item xs={12} md={12} xl={12} >
-                          {/* Texto flow typebot */}
-                          <p>Para acessar o flow e criar um fluxo no Typebot, você pode visitar: <a href="https://flow.orionchat.cloud">https://flow.orionchat.cloud</a> 😊</p>
-                        </Grid>
-
+                        
                       </>
                     )}
                   </Grid>

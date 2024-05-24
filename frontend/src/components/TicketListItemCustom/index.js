@@ -505,7 +505,7 @@ const useStyles = makeStyles((theme) => ({
               className={classes.acceptButton}
               size="small"
               loading={loading}
-			        //PLW DESIGN INSERIDO O handleChangeTab
+			  //PLW DESIGN INSERIDO O handleChangeTab
               onClick={e => handleAcepptTicket(ticket.id)}
             >
               {i18n.t("ticketsList.buttons.accept")}

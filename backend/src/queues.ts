@@ -94,7 +94,7 @@ async function handleSendMessage(job) {
   }
 }
 
-async function handleVerifyQueue(job) {
+{/*async function handleVerifyQueue(job) {
   logger.info("Buscando atendimentos perdidos nas filas");
   try {
     const companies = await Company.findAll({
@@ -114,9 +114,9 @@ async function handleVerifyQueue(job) {
           }
         },
       ]
-    });
+    }); */}
 
-    companies.map(async c => {
+{/*    companies.map(async c => {
       c.whatsapps.map(async w => {
 
         if (w.status === "CONNECTED") {
@@ -185,7 +185,7 @@ async function handleVerifyQueue(job) {
                 logger.info(`Nenhum atendimento perdido encontrado - Empresa: ${companyId}`);
               }
             } else {
-              logger.info(`Condicao nao respeitada - Empresa: ${companyId}`);
+              logger.info(`Condição não respeitada - Empresa: ${companyId}`);
             }
           }
         }
@@ -196,7 +196,7 @@ async function handleVerifyQueue(job) {
     logger.error("SearchForQueue -> VerifyQueue: error", e.message);
     throw e;
   }
-};
+}; */}
 
 async function handleCloseTicketsAutomatic() {
   const job = new CronJob('*/1 * * * *', async () => {
@@ -537,7 +537,7 @@ async function verifyAndFinalizeCampaign(campaign) {
   }
 
   const io = getIO();
-  io.emit(`company-${campaign.companyId}-campaign`, {
+  io.to(`company-${campaign.companyId}-mainchannel`).emit(`company-${campaign.companyId}-campaign`, {
     action: "update",
     record: campaign
   });
@@ -758,7 +758,7 @@ async function handleDispatchCampaign(job) {
     await verifyAndFinalizeCampaign(campaign);
 
     const io = getIO();
-    io.emit(`company-${campaign.companyId}-campaign`, {
+    io.to(`company-${campaign.companyId}-mainchannel`).emit(`company-${campaign.companyId}-campaign`, {
       action: "update",
       record: campaign
     });
@@ -888,7 +888,7 @@ export async function startQueueProcess() {
 
   userMonitor.process("VerifyLoginStatus", handleLoginStatus);
 
-  queueMonitor.process("VerifyQueueStatus", handleVerifyQueue);
+  //queueMonitor.process("VerifyQueueStatus", handleVerifyQueue);
 
 
 

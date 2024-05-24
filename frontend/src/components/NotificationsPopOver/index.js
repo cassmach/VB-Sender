@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 
 import { useHistory } from "react-router-dom";
 import { format } from "date-fns";
-import { socketConnection } from "../../services/socket";
+import { SocketContext } from "../../context/Socket/SocketContext";
 
 import useSound from "use-sound";
 
@@ -14,7 +14,6 @@ import ListItemText from "@material-ui/core/ListItemText";
 import { makeStyles } from "@material-ui/core/styles";
 import Badge from "@material-ui/core/Badge";
 import ChatIcon from "@material-ui/icons/Chat";
-import { Tooltip } from "@material-ui/core";
 
 import TicketListItem from "../TicketListItemCustom";
 import useTickets from "../../hooks/useTickets";
@@ -65,6 +64,8 @@ const NotificationsPopOver = (volume) => {
 
 	const historyRef = useRef(history);
 
+  const socketManager = useContext(SocketContext);
+
 	useEffect(() => {
 		const fetchSettings = async () => {
 			try {
@@ -109,8 +110,9 @@ const NotificationsPopOver = (volume) => {
 	}, [ticketIdUrl]);
 
 	useEffect(() => {
-		const socket = socketConnection({companyId: user.companyId, userId: user.id});
-		socket.on("connect", () => socket.emit("joinNotification"));
+    const socket = socketManager.getSocket(user.companyId);
+
+		socket.on("ready", () => socket.emit("joinNotification"));
 
 		socket.on(`company-${user.companyId}-ticket`, data => {
 			if (data.action === "updateUnread" || data.action === "delete") {
@@ -169,7 +171,7 @@ const NotificationsPopOver = (volume) => {
 		return () => {
 			socket.disconnect();
 		};
-	}, [user, showPendingTickets]);
+	}, [user, showPendingTickets, socketManager]);
 
 	const handleNotifications = data => {
 		const { message, contact, ticket } = data;
@@ -221,7 +223,6 @@ const NotificationsPopOver = (volume) => {
 
 	return (
 		<>
-		    <Tooltip title="Notificações" placement="bottom">
 			<IconButton
 				onClick={handleClick}
 				ref={anchorEl}
@@ -233,7 +234,6 @@ const NotificationsPopOver = (volume) => {
 					<ChatIcon />
 				</Badge>
 			</IconButton>
-			</Tooltip>
 			<Popover
 				disableScrollLock
 				open={isOpen}

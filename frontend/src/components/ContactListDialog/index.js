@@ -51,9 +51,9 @@ const useStyles = makeStyles((theme) => ({
 
 const ContactListSchema = Yup.object().shape({
   name: Yup.string()
-    .min(2, "Muito curto!")
-    .max(50, "Muito longo!")
-    .required("Obrigatório"),
+    .min(2, "Too Short!")
+    .max(50, "Too Long!")
+    .required("Required"),
 });
 
 const ContactListModal = ({ open, onClose, contactListId }) => {

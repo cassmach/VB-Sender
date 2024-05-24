@@ -20,11 +20,6 @@ import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import CachedIcon from "@material-ui/icons/Cached";
-import { Tooltip } from "@material-ui/core";
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
-import HelpIcon from '@material-ui/icons/Help';
-
-
 
 import MainListItems from "./MainListItems";
 import NotificationsPopOver from "../components/NotificationsPopOver";
@@ -38,7 +33,7 @@ import toastError from "../errors/toastError";
 import AnnouncementsPopover from "../components/AnnouncementsPopover";
 
 import logo from "../assets/logo.png";
-import { socketConnection } from "../services/socket";
+import { SocketContext } from "../context/Socket/SocketContext";
 import ChatPopover from "../pages/Chat/ChatPopover";
 
 import { useDate } from "../hooks/useDate";
@@ -46,7 +41,6 @@ import { useDate } from "../hooks/useDate";
 import ColorModeContext from "../layout/themeContext";
 import Brightness4Icon from '@material-ui/icons/Brightness4';
 import Brightness7Icon from '@material-ui/icons/Brightness7';
-import { HelpSharp } from "@material-ui/icons";
 
 const drawerWidth = 240;
 
@@ -59,11 +53,12 @@ const useStyles = makeStyles((theme) => ({
     },
     backgroundColor: theme.palette.fancyBackground,
     '& .MuiButton-outlinedPrimary': {
-      color: theme.mode === 'light' ? '#6517AB' : '#FFF',
-      border: theme.mode === 'light' ? '1px solid #6517AB' : '1px solid rgba(255, 255, 255, 0.5)',
+      color: theme.mode === 'light' ? '#FFF' : '#FFF',
+	  backgroundColor: theme.mode === 'light' ? '#10677F' : '#1c1c1c',
+      //border: theme.mode === 'light' ? '1px solid rgba(0 124 102)' : '1px solid rgba(255, 255, 255, 0.5)',
     },
     '& .MuiTab-textColorPrimary.Mui-selected': {
-      color: theme.mode === 'light' ? '#6517AB' : '#FFF',
+      color: theme.mode === 'light' ? '#10677F' : '#FFF',
     }
   },
   avatar: {
@@ -247,8 +242,10 @@ const LoggedInLayout = ({ children, themeToggle }) => {
   // }, []);
   //##############################################################################
 
+  const socketManager = useContext(SocketContext);
+
   useEffect(() => {
-    if (document.body.offsetWidth > 600) {
+    if (document.body.offsetWidth > 1200) {
       setDrawerOpen(true);
     }
   }, []);
@@ -265,7 +262,7 @@ const LoggedInLayout = ({ children, themeToggle }) => {
     const companyId = localStorage.getItem("companyId");
     const userId = localStorage.getItem("userId");
 
-    const socket = socketConnection({ companyId });
+    const socket = socketManager.getSocket(companyId);
 
     socket.on(`company-${companyId}-auth`, (data) => {
       if (data.user.id === +userId) {
@@ -286,8 +283,7 @@ const LoggedInLayout = ({ children, themeToggle }) => {
       socket.disconnect();
       clearInterval(interval);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [socketManager]);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -402,54 +398,40 @@ const LoggedInLayout = ({ children, themeToggle }) => {
             )}
           </Typography>
 
-          <Tooltip title="Modo Dark" placement="bottom">
           <IconButton edge="start" onClick={toggleColorMode}>
             {theme.mode === 'dark' ? <Brightness7Icon style={{ color: "white" }} /> : <Brightness4Icon style={{ color: "white" }} />}
           </IconButton>
-          </Tooltip>
 
           <NotificationsVolume
             setVolume={setVolume}
             volume={volume}
           />
 
-          <Tooltip title="Atualizar Página" placement="bottom">
-            <IconButton
-              onClick={handleRefreshPage}
-              aria-label="Atualizar"
-              color="inherit"
-            >
-              <CachedIcon style={{ color: "white" }} />
-            </IconButton>
-          </Tooltip>
-            
+          <IconButton
+            onClick={handleRefreshPage}
+            aria-label={i18n.t("mainDrawer.appBar.refresh")}
+            color="inherit"
+          >
+            <CachedIcon style={{ color: "white" }} />
+          </IconButton>
+
           {user.id && <NotificationsPopOver volume={volume} />}
-          
+
           <AnnouncementsPopover />
 
-          <Tooltip title="Ajuda" placement="bottom">
-            <a href="https://app.archbee.com/public/PREVIEW-HMuaV5LGoGXh-CasHano5/PREVIEW-ZLSdAorRwoJbsx63g1vN9" target="blank">
-              <IconButton>
-                <HelpSharp style={{ color: "white" }} />
-              </IconButton>
-            </a>
-          </Tooltip>
-              
           <ChatPopover />
 
           <div>
-            <Tooltip title="Perfil/ Sair" placement="bottom">
-              <IconButton
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleMenu}
-                variant="contained"
-                style={{ color: "white" }}
-              >
-                <AccountCircle />
-              </IconButton>
-            </Tooltip>
+            <IconButton
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleMenu}
+              variant="contained"
+              style={{ color: "white" }}
+            >
+              <AccountCircle />
+            </IconButton>
             <Menu
               id="menu-appbar"
               anchorEl={anchorEl}
@@ -468,11 +450,9 @@ const LoggedInLayout = ({ children, themeToggle }) => {
               <MenuItem onClick={handleOpenUserModal}>
                 {i18n.t("mainDrawer.appBar.user.profile")}
               </MenuItem>
-
               <MenuItem onClick={handleClickLogout}>
-                {i18n.t("Sair")}
+                {i18n.t("mainDrawer.appBar.user.logout")}
               </MenuItem>
-
             </Menu>
           </div>
         </Toolbar>

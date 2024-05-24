@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
+
 import { useParams, useHistory } from "react-router-dom";
+
 import {
   Button,
   Dialog,
@@ -17,8 +19,10 @@ import ChatList from "./ChatList";
 import ChatMessages from "./ChatMessages";
 import { UsersFilter } from "../../components/UsersFilter";
 import api from "../../services/api";
-import { socketConnection } from "../../services/socket";
+import { SocketContext } from "../../context/Socket/SocketContext";
+
 import { has, isObject } from "lodash";
+
 import { AuthContext } from "../../context/Auth/AuthContext";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 
@@ -50,9 +54,6 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "right",
     padding: 10,
   },
-  errorText: {
-    color: "red",
-  },
 }));
 
 export function ChatModal({
@@ -64,10 +65,6 @@ export function ChatModal({
 }) {
   const [users, setUsers] = useState([]);
   const [title, setTitle] = useState("");
-  const [titleError, setTitleError] = useState(false);
-  const [usersError, setUsersError] = useState(false);
-
-  const classes = useStyles();
 
   useEffect(() => {
     setTitle("");
@@ -85,17 +82,13 @@ export function ChatModal({
   const handleSave = async () => {
     try {
       if (!title) {
-        setTitleError(true);
+        alert("Por favor, preencha o título da conversa.");
         return;
-      } else {
-        setTitleError(false);
       }
 
       if (!users || users.length === 0) {
-        setUsersError(true);
+        alert("Por favor, selecione pelo menos um usuário.");
         return;
-      } else {
-        setUsersError(false);
       }
 
       if (type === "edit") {
@@ -133,8 +126,6 @@ export function ChatModal({
               variant="outlined"
               size="small"
               fullWidth
-              error={titleError}
-              helperText={titleError && "Por favor, preencha o título da conversa."}
             />
           </Grid>
           <Grid xs={12} item>
@@ -157,7 +148,6 @@ export function ChatModal({
   );
 }
 
-
 function Chat(props) {
   const classes = useStyles();
   const { user } = useContext(AuthContext);
@@ -176,6 +166,8 @@ function Chat(props) {
   const isMounted = useRef(true);
   const scrollToBottomRef = useRef();
   const { id } = useParams();
+
+  const socketManager = useContext(SocketContext);
 
   useEffect(() => {
     return () => {
@@ -216,7 +208,7 @@ function Chat(props) {
 
   useEffect(() => {
     const companyId = localStorage.getItem("companyId");
-    const socket = socketConnection({ companyId });
+    const socket = socketManager.getSocket(companyId);
 
     socket.on(`company-${companyId}-chat-user-${user.id}`, (data) => {
       if (data.action === "create") {
@@ -283,7 +275,7 @@ function Chat(props) {
       socket.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentChat]);
+  }, [currentChat, socketManager]);
 
   const selectChat = (chat) => {
     try {
