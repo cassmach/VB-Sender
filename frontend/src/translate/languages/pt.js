@@ -823,13 +823,7 @@ const messages = {
           deleteMessage: "Esta ação não pode ser revertida.",
         },
         
-        agender: {
-          title:"Agenda",
-          confirmationModal: {
-            deleteTitle: "Você tem certeza que quer excluir este Serviço?",
-          deleteMessage: "Esta ação não pode ser revertida.",
-          }
-        },
+       
 
         
         table: {
@@ -847,6 +841,34 @@ const messages = {
           deleted: "Agendamento excluído com sucesso.",
         },
       },
+
+      agender: {
+        title: "Agenda",
+        confirmationModal: {
+          deleteTitle: "Você tem certeza que quer excluir esta Agenda?",
+          deleteMessage: "Esta ação não pode ser revertida.",
+        },
+        
+       
+
+        
+        table: {
+          contact: "Contato",
+          body: "Mensagem",
+          sendAt: "Data da Agenda",
+          sentAt: "Data de Envio",
+          status: "Status",
+          actions: "Ações",
+        },
+        buttons: {
+          add: "Novo Agenda",
+        },
+        toasts: {
+          deleted: "Agenda excluída com sucesso.",
+        },
+      },
+
+
       tags: {
         title: "Tags",
         confirmationModal: {
