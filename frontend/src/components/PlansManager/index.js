@@ -547,7 +547,7 @@ export default function PlansManager() {
             value: data.value?.toLocaleString('pt-br', { minimumFractionDigits: 0 }) || 0,
             useCampaigns,
             useSchedules,
-            useAgender,
+            userAgender,
             useInternalChat,
             useExternalApi,
             useKanban,
