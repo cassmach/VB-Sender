@@ -35,6 +35,7 @@ const messages = {
           connections: "Conexões",
           campaigns: "Campanhas",
           schedules: "Agendamentos",
+          agender: "Agenda",
           enabled: "Habilitadas",
           disabled: "Desabilitadas",
           clear: "Cancelar",
@@ -802,6 +803,16 @@ const messages = {
           deleteTitle: "Você tem certeza que quer excluir este Agendamento?",
           deleteMessage: "Esta ação não pode ser revertida.",
         },
+        
+        agender: {
+          title:"Agenda",
+          confirmationModal: {
+            deleteTitle: "Você tem certeza que quer excluir este Serviço?",
+          deleteMessage: "Esta ação não pode ser revertida.",
+          }
+        },
+
+        
         table: {
           contact: "Contato",
           body: "Mensagem",
