@@ -393,6 +393,7 @@ export function PlansManagerGrid(props) {
                         <TableCell align="center">Valor</TableCell>
                         <TableCell align="center">{i18n.t("plans.form.campaigns")}</TableCell>
                         <TableCell align="center">{i18n.t("plans.form.schedules")}</TableCell>
+                        <TableCell align="center">{i18n.t("plans.form.agender")}</TableCell>
                         <TableCell align="center">Chat Interno</TableCell>
                         <TableCell align="center">API Externa</TableCell>
                         <TableCell align="center">Kanban</TableCell>
@@ -516,6 +517,7 @@ export default function PlansManager() {
             value: 0,
             useCampaigns: true,
             useSchedules: true,
+            userAgender: true,
             useInternalChat: true,
             useExternalApi: true,
             useKanban: true,
@@ -545,6 +547,7 @@ export default function PlansManager() {
             value: data.value?.toLocaleString('pt-br', { minimumFractionDigits: 0 }) || 0,
             useCampaigns,
             useSchedules,
+            useAgender,
             useInternalChat,
             useExternalApi,
             useKanban,

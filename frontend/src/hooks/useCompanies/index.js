@@ -69,6 +69,7 @@ const useCompanies = () => {
         });
         return responseData;
     }
+    
 
     return {
         save,
@@ -90,5 +91,17 @@ const updateAgender = async (data) => {
     });
     return responseData
 }
+return {
+    save,
+    update,
+    remove,
+    list,
+    find,
+    finding,
+    findAll,
+    updateSchedules,
+    updateAgender
+}
+
 
 export default useCompanies;

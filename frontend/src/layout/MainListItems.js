@@ -334,7 +334,7 @@ const MainListItems = (props) => {
     
       <ListItemLink
         to="/agender"
-        primary={i18n.t("mainDrawer.listItems.schedules")}
+        primary={i18n.t("mainDrawer.listItems.agender")}
         icon={<EventIcon />}
       />
 
