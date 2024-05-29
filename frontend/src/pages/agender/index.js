@@ -48,7 +48,7 @@ var defaultMessages = {
   event: "Evento",
   allDay: "Dia Todo",
   week: "Semana",
-  work_week: "Agendamentos",
+  work_week: "Agenda",
   day: "Dia",
   month: "Mês",
   previous: "Anterior",
@@ -205,7 +205,7 @@ const Agender = () => {
   const handleDeleteSchedule = async (scheduleId) => {
     try {
       await api.delete(`/agender/${scheduleId}`);
-      toast.success(i18n.t("schedules.toasts.deleted"));
+      toast.success(i18n.t("agender.toasts.deleted"));
     } catch (err) {
       toastError(err);
     }
@@ -280,7 +280,7 @@ const Agender = () => {
             color="primary"
             onClick={handleOpenScheduleModal}
           >
-            {i18n.t("schedules.buttons.add")}
+            {i18n.t("agender.buttons.add")}
           </Button>
         </MainHeaderButtonsWrapper>
       </MainHeader>

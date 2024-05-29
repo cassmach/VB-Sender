@@ -351,6 +351,25 @@ const messages = {
         },
         success: "Agendamento salvo com sucesso.",
       },
+
+      agenderModal: {
+        title: {
+          add: "Novo Agenda",
+          edit: "Editar Agenda",
+        },
+        form: {
+          body: "Mensagem",
+          contact: "Contato",
+          sendAt: "Data da Agenda",
+          sentAt: "Data de Envio",
+        },
+        buttons: {
+          okAdd: "Adicionar",
+          okEdit: "Salvar",
+          cancel: "Cancelar",
+        },
+        success: "Agenda salva com sucesso.",
+      },
       tagModal: {
         title: {
           add: "Nova Tag",
