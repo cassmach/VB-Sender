@@ -57,7 +57,7 @@ var defaultMessages = {
   tomorrow: "Amanhã",
   today: "Hoje",
   agenda: "Agenda",
-  noEventsInRange: "Não há agendamentos no período.",
+  noEventsInRange: "Não há Agenda no período.",
   showMore: function showMore(total) {
     return "+" + total + " mais";
   }

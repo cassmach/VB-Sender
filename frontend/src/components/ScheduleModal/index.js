@@ -226,6 +226,14 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 			>
 				{i18n.t("scheduleModal.confirmationModal.deleteMessage")}
 			</ConfirmationModal>
+			<ConfirmationModal
+				title={i18n.t("agenderModal.confirmationModal.deleteTitle")}
+				open={confirmationOpen}
+				onClose={() => setConfirmationOpen(false)}
+				onConfirm={deleteMedia}
+			>
+				{i18n.t("agenderModal.confirmationModal.deleteMessage")}
+			</ConfirmationModal>
 			<Dialog
 				open={open}
 				onClose={handleClose}

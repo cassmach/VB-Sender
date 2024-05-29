@@ -354,7 +354,7 @@ const messages = {
 
       agenderModal: {
         title: {
-          add: "Novo Agenda",
+          add: "Nova Agenda",
           edit: "Editar Agenda",
         },
         form: {

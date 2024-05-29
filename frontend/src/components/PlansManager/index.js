@@ -206,7 +206,7 @@ export function PlanManagerForm(props) {
                             </FormControl>
                         </Grid>
 
-                         {/* AGENDAMENTOS */}
+                         {/* Agenda */}
                          <Grid xs={12} sm={8} md={2} item>
                             <FormControl margin="dense" variant="outlined" fullWidth>
                                 <InputLabel htmlFor="useAgender-selection">{i18n.t("plans.form.agender")}</InputLabel>
