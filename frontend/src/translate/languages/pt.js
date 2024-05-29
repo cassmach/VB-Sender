@@ -448,7 +448,7 @@ const messages = {
           settings: "Configurações",
           helps: "Ajuda",
           messagesAPI: "API",
-          schedules: "Agendamentos",
+          schedules: "Agendar Envio",
           campaigns: "Campanhas",
           annoucements: "Informativos",
           chats: "Chat Interno",

@@ -26,6 +26,7 @@ import { TicketsContextProvider } from "../context/Tickets/TicketsContext";
 import { WhatsAppsProvider } from "../context/WhatsApp/WhatsAppsContext";
 import Route from "./Route";
 import Schedules from "../pages/Schedules";
+import Schedules from "../pages/agender"
 import Campaigns from "../pages/Campaigns";
 import CampaignsConfig from "../pages/CampaignsConfig";
 import CampaignReport from "../pages/CampaignReport";
@@ -87,6 +88,13 @@ const Routes = () => {
                 <Route
                   exact
                   path="/schedules"
+                  component={Schedules}
+                  isPrivate
+                />
+
+                  <Route
+                  exact
+                  path="/agender"
                   component={Schedules}
                   isPrivate
                 />
