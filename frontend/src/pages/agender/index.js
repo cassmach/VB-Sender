@@ -101,7 +101,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Schedules = () => {
+const Agender = () => {
   const classes = useStyles();
   const history = useHistory();
 
@@ -121,7 +121,7 @@ const Schedules = () => {
 
   const fetchSchedules = useCallback(async () => {
     try {
-      const { data } = await api.get("/schedules/", {
+      const { data } = await api.get("/agender/", {
         params: { searchParam, pageNumber },
       });
 
@@ -204,7 +204,7 @@ const Schedules = () => {
 
   const handleDeleteSchedule = async (scheduleId) => {
     try {
-      await api.delete(`/schedules/${scheduleId}`);
+      await api.delete(`/agender/${scheduleId}`);
       toast.success(i18n.t("schedules.toasts.deleted"));
     } catch (err) {
       toastError(err);
@@ -321,4 +321,4 @@ const Schedules = () => {
   );
 };
 
-export default Schedules;
+export default Agender;

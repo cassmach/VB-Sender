@@ -144,6 +144,7 @@ const MainListItems = (props) => {
   const [showOpenAi, setShowOpenAi] = useState(false);
   const [showIntegrations, setShowIntegrations] = useState(false); const history = useHistory();
   const [showSchedules, setShowSchedules] = useState(false);
+  const [showAgender, setShowAgender] = useState(false);
   const [showInternalChat, setShowInternalChat] = useState(false);
   const [showExternalApi, setShowExternalApi] = useState(false);
 
@@ -186,6 +187,7 @@ const MainListItems = (props) => {
       setShowOpenAi(planConfigs.plan.useOpenAi);
       setShowIntegrations(planConfigs.plan.useIntegrations);
       setShowSchedules(planConfigs.plan.useSchedules);
+      setShowAgender(planConfigs.plan.userAgender);
       setShowInternalChat(planConfigs.plan.useInternalChat);
       setShowExternalApi(planConfigs.plan.useExternalApi);
     }
@@ -341,6 +343,8 @@ const MainListItems = (props) => {
         primary={i18n.t("mainDrawer.listItems.schedules")}
         icon={<EventIcon />}
       />
+
+      
 
       <ListItemLink
         to="/tags"

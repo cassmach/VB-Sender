@@ -75,6 +75,7 @@ export function PlanManagerForm(props) {
         value: 0,
         useCampaigns: true,
         useSchedules: true,
+        userAgender: true,
         useInternalChat: true,
         useExternalApi: true,
         useKanban: true,
@@ -197,6 +198,24 @@ export function PlanManagerForm(props) {
                                     label={i18n.t("plans.form.schedules")}
                                     labelId="useSchedules-selection-label"
                                     name="useSchedules"
+                                    margin="dense"
+                                >
+                                    <MenuItem value={true}>{i18n.t("plans.form.enabled")}</MenuItem>
+                                    <MenuItem value={false}>{i18n.t("plans.form.disabled")}</MenuItem>
+                                </Field>
+                            </FormControl>
+                        </Grid>
+
+                         {/* AGENDAMENTOS */}
+                         <Grid xs={12} sm={8} md={2} item>
+                            <FormControl margin="dense" variant="outlined" fullWidth>
+                                <InputLabel htmlFor="useAgender-selection">{i18n.t("plans.form.agender")}</InputLabel>
+                                <Field
+                                    as={Select}
+                                    id="useAgender-selection"
+                                    label={i18n.t("plans.form.schedules")}
+                                    labelId="useAgender-selection-label"
+                                    name="useAgender"
                                     margin="dense"
                                 >
                                     <MenuItem value={true}>{i18n.t("plans.form.enabled")}</MenuItem>
@@ -333,6 +352,9 @@ export function PlansManagerGrid(props) {
         return row.useSchedules === false ? `${i18n.t("plans.form.no")}` : `${i18n.t("plans.form.yes")}`;
     };
 
+    const renderAgender = (row) => {
+        return row.userAgender === false ? `${i18n.t("plans.form.no")}` : `${i18n.t("plans.form.yes")}`;
+    };
     const renderInternalChat = (row) => {
         return row.useInternalChat === false ? `${i18n.t("plans.form.no")}` : `${i18n.t("plans.form.yes")}`;
     };
@@ -393,6 +415,7 @@ export function PlansManagerGrid(props) {
                             <TableCell align="center">{i18n.t("plans.form.money")} {row.value ? row.value.toLocaleString('pt-br', { minimumFractionDigits: 2 }) : '00.00'}</TableCell>
                             <TableCell align="center">{renderCampaigns(row)}</TableCell>
                             <TableCell align="center">{renderSchedules(row)}</TableCell>
+                            <TableCell align="center">{renderAgender(row)}</TableCell>
                             <TableCell align="center">{renderInternalChat(row)}</TableCell>
                             <TableCell align="center">{renderExternalApi(row)}</TableCell>
                             <TableCell align="center">{renderKanban(row)}</TableCell>
@@ -421,6 +444,7 @@ export default function PlansManager() {
         value: 0,
         useCampaigns: true,
         useSchedules: true,
+        userAgender: true,
         useInternalChat: true,
         useExternalApi: true,
         useKanban: true,
@@ -496,7 +520,8 @@ export default function PlansManager() {
             useExternalApi: true,
             useKanban: true,
             useOpenAi: true,
-            useIntegrations: true
+            useIntegrations: true,
+            userAgender: true
         })
     }
 
@@ -504,6 +529,7 @@ export default function PlansManager() {
 
         let useCampaigns = data.useCampaigns === false ? false : true
         let useSchedules = data.useSchedules === false ? false : true
+        let userAgender = data.userAgender === false ? false : true
         let useInternalChat = data.useInternalChat === false ? false : true
         let useExternalApi = data.useExternalApi === false ? false : true
         let useKanban = data.useKanban === false ? false : true

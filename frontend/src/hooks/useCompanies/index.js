@@ -82,4 +82,13 @@ const useCompanies = () => {
     }
 }
 
+const updateAgender = async (data) => {
+    const { data: responseData} = await api.request({
+        url: `companies/${data.id}/agender`,
+        method: 'PUT',
+        data
+    });
+    return responseData
+}
+
 export default useCompanies;
