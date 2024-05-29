@@ -242,13 +242,13 @@ const Agender = () => {
       <ConfirmationModal
         title={
           deletingSchedule &&
-          `${i18n.t("schedules.confirmationModal.deleteTitle")}`
+          `${i18n.t("agender.confirmationModal.deleteTitle")}`
         }
         open={confirmModalOpen}
         onClose={() => setConfirmModalOpen(false)}
         onConfirm={() => handleDeleteSchedule(deletingSchedule.id)}
       >
-        {i18n.t("schedules.confirmationModal.deleteMessage")}
+        {i18n.t("agender.confirmationModal.deleteMessage")}
       </ConfirmationModal>
       <ScheduleModal
         open={scheduleModalOpen}
@@ -260,7 +260,7 @@ const Agender = () => {
         cleanContact={cleanContact}
       />
       <MainHeader>
-        <Title>{i18n.t("schedules.title")} ({schedules.length})</Title>
+        <Title>{i18n.t("agender.title")} ({schedules.length})</Title>
         <MainHeaderButtonsWrapper>
           <TextField
             placeholder={i18n.t("contacts.searchPlaceholder")}
