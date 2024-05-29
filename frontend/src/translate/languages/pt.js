@@ -449,6 +449,7 @@ const messages = {
           helps: "Ajuda",
           messagesAPI: "API",
           schedules: "Agendar Envio",
+          agender: "Agenda",
           campaigns: "Campanhas",
           annoucements: "Informativos",
           chats: "Chat Interno",
