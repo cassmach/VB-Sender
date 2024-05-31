@@ -35,15 +35,6 @@ const useCompanies = () => {
         return data;
     }
 
-    const finding = async (id) => {
-        const { data } = await api.request({
-            url: `/companies/${id}`,
-            method: 'GET'
-        });
-        return data;
-    }
-
-
     const update = async (data) => {
         const { data: responseData } = await api.request({
             url: `/companies/${data.id}`,
@@ -69,7 +60,6 @@ const useCompanies = () => {
         });
         return responseData;
     }
-    
 
     return {
         save,
@@ -77,13 +67,9 @@ const useCompanies = () => {
         remove,
         list,
         find,
-        finding,
         findAll,
         updateSchedules
-        
     }
 }
-
-
 
 export default useCompanies;

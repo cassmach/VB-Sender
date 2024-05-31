@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import React, { useState, useEffect, useReducer, useContext } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { toast } from "react-toastify";
 
 import { useHistory } from "react-router-dom";
@@ -38,7 +38,8 @@ import toastError from "../../errors/toastError";
 import { Grid } from "@material-ui/core";
 import { isArray } from "lodash";
 import { useDate } from "../../hooks/useDate";
-import { SocketContext } from "../../context/Socket/SocketContext";
+import { socketConnection } from "../../services/socket";
+import usePlans from "../../hooks/usePlans";
 
 const reducer = (state, action) => {
   if (action.type === "LOAD_CAMPAIGNS") {
@@ -89,7 +90,8 @@ const reducer = (state, action) => {
 const useStyles = makeStyles((theme) => ({
   mainPaper: {
     flex: 1,
-    padding: theme.spacing(1),
+    // padding: theme.spacing(1),
+    padding: theme.padding,
     overflowY: "scroll",
     ...theme.scrollbarStyles,
   },
@@ -97,7 +99,6 @@ const useStyles = makeStyles((theme) => ({
 
 const Campaigns = () => {
   const classes = useStyles();
-
   const history = useHistory();
 
   const [loading, setLoading] = useState(false);
@@ -107,12 +108,27 @@ const Campaigns = () => {
   const [deletingCampaign, setDeletingCampaign] = useState(null);
   const [campaignModalOpen, setCampaignModalOpen] = useState(false);
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [showCampaigns, setShowCampaigns] = useState(false);
   const [searchParam, setSearchParam] = useState("");
   const [campaigns, dispatch] = useReducer(reducer, []);
 
   const { datetimeToClient } = useDate();
+  const { getPlanCompany } = usePlans();
 
-  const socketManager = useContext(SocketContext);
+  useEffect(() => {
+    async function fetchData() {
+      const companyId = localStorage.getItem("companyId");
+      const planConfigs = await getPlanCompany(undefined, companyId);
+      if (!planConfigs.plan.useCampaigns) {
+        toast.error("Esta empresa não possui permissão para acessar essa página! Estamos lhe redirecionando.");
+        setTimeout(() => {          
+          history.push(`/`)
+        }, 1000);
+      }
+    }
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     dispatch({ type: "RESET" });
@@ -130,7 +146,7 @@ const Campaigns = () => {
 
   useEffect(() => {
     const companyId = localStorage.getItem("companyId");
-    const socket = socketManager.getSocket(companyId);
+    const socket = socketConnection({ companyId });
 
     socket.on(`company-${companyId}-campaign`, (data) => {
       if (data.action === "update" || data.action === "create") {
@@ -143,7 +159,7 @@ const Campaigns = () => {
     return () => {
       socket.disconnect();
     };
-  }, [socketManager]);
+  }, []);
 
   const fetchCampaigns = async () => {
     try {
@@ -245,9 +261,7 @@ const Campaigns = () => {
       <ConfirmationModal
         title={
           deletingCampaign &&
-          `${i18n.t("campaigns.confirmationModal.deleteTitle")} ${
-            deletingCampaign.name
-          }?`
+          `${i18n.t("campaigns.confirmationModal.deleteTitle")} ${deletingCampaign.name}?`
         }
         open={confirmModalOpen}
         onClose={setConfirmModalOpen}
