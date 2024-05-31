@@ -1,10 +1,10 @@
 server {
 
-  server_name robo.zazap.online;
+  server_name apichat.devcoders.com.br;
 
   location / {
 
-    proxy_pass http://robo.zazap.online:8081;
+    proxy_pass http://apichat.devcoders.com.br:8081;
 
     proxy_http_version 1.1;
 
@@ -27,20 +27,20 @@ server {
   
 
     listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/robo.zazap.online-0001/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/robo.zazap.online-0001/privkey.pem; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/apichat.devcoders.com.br-0001/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/apichat.devcoders.com.br-0001/privkey.pem; # managed by Certbot
     include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
 }
 server {
-    if ($host = robo.zazap.online) {
+    if ($host = apichat.devcoders.com.br) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
 
 
 
-  server_name robo.zazap.online;
+  server_name apichat.devcoders.com.br;
     listen 80;
     return 404; # managed by Certbot
 
