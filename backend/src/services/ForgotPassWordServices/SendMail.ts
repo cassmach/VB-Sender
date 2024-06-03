@@ -34,8 +34,8 @@ const SendMail = async (email: string, tokenSenha: string) => {
         const mailOptions = {
           from: fromEmail,
           to: email,
-          subject: "Redefinição de Senha - ZAZAP",
-          text: `Olá,\n\nVocê solicitou a redefinição de senha para sua conta na ZAZAP. Utilize o seguinte Código de Verificação para concluir o processo de redefinição de senha:\n\nCódigo de Verificação: ${tokenSenha}\n\nPor favor, copie e cole o Código de Verificação no campo 'Código de Verificação' na plataforma ZAZAP.\n\nSe você não solicitou esta redefinição de senha, por favor, ignore este e-mail.\n\n\nAtenciosamente,\nEquipe ZAZAP`
+          subject: "Redefinição de Senha - VB Sender",
+          text: `Olá,\n\nVocê solicitou a redefinição de senha para sua conta na VB Sender. Utilize o seguinte Código de Verificação para concluir o processo de redefinição de senha:\n\nCódigo de Verificação: ${tokenSenha}\n\nPor favor, copie e cole o Código de Verificação no campo 'Código de Verificação' na plataforma VB Sender.\n\nSe você não solicitou esta redefinição de senha, por favor, ignore este e-mail.\n\n\nAtenciosamente,\nEquipe VB Sender`
         };
         const info = await transporter.sendMail(mailOptions);
         console.log("E-mail enviado: " + info.response);

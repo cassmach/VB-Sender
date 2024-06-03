@@ -29,7 +29,7 @@ module.exports = {
           "Companies",
           [
             {
-              name: "ZAZAP",
+              name: "VB Sender",
               planId: 1,
               createdAt: new Date(),
               updatedAt: new Date()
