@@ -37,7 +37,7 @@ const App = () => {
                 },
                 "&::-webkit-scrollbar-thumb": {
                     boxShadow: 'inset 0 0 6px rgba(0, 0, 0, 0.3)',
-                    backgroundColor: "#000",
+                    backgroundColor: "#3CB4C9",
                 },
             },
             scrollbarStylesSoft: {
@@ -45,12 +45,12 @@ const App = () => {
                     width: "8px",
                 },
                 "&::-webkit-scrollbar-thumb": {
-                    backgroundColor: mode === "light" ? "#000" : "#000",
+                    backgroundColor: mode === "light" ? "#3CB4C9" : "#3CB4C9",
                 },
             },
             palette: {
                 type: mode,
-                primary: { main: mode === "light" ? "#000" : "#F3F3F3" },
+                primary: { main: mode === "light" ? "#3CB4C9" : "#F3F3F3" },
                 textPrimary: mode === "light" ? "#000" : "#FFFFFF",
                 borderPrimary: mode === "light" ? "#000" : "#FFFFFF",
                 dark: { main: mode === "light" ? "#3CB4C9" : "#F3F3F3" },
