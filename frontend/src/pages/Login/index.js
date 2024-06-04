@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     "&.MuiButton-root": {
       margin: "20px 0px 16px",
-      backgroundColor: "#3CB4C9",
+      backgroundColor: "#10677F",
       borderRadius: " 30px",
     },
     "&:hover": {
@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
       // boxShadow: "none",
     },
 
-    backgroundColor: "#3CB4C9",
+    backgroundColor: "#10677F",
     margin: theme.spacing(3, 0, 2),
     WebkitTextFillColor: "#FFF",
     width: "50%",

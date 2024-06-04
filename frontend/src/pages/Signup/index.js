@@ -252,7 +252,7 @@ const SignUp = () => {
                       variant="body1"
                       component={RouterLink}
                       to="/login"
-                      style={{ color: "#3CB4C9", fontWeight: 500 }}
+                      style={{ color: "#10677F", fontWeight: 500 }}
                     >
                       {i18n.t("signup.buttons.login")}
                     </Link>
