@@ -125,7 +125,6 @@ const SignUp = () => {
     <div className="geral-signup">
       <div className={"container-signup"}>
         <div className={"paper"}>
-          <img src={logo} alt="Whats" className="img-logo-signup" />
 
           <h4 className="h4">Cadastre-se</h4>
           
