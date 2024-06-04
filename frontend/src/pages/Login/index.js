@@ -1,90 +1,88 @@
 import React, { useState, useContext } from "react";
 import { Link as RouterLink } from "react-router-dom";
-
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import IconButton from "@material-ui/core/IconButton";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import WhatsAppIcon from "@material-ui/icons/WhatsApp";
-import { versionSystem } from "../../../package.json";
-import { nomeEmpresa } from "../../../package.json";
-import bk from "../../assets/bk.jpg"
-
+import { i18n } from "../../translate/i18n";
+import "./style.css";
 import { AuthContext } from "../../context/Auth/AuthContext";
-import logo from "../../assets/logologin.png";
+import logo from "../../assets/logo.png";
 
-const randomImageURL = "https://source.unsplash.com/random/?tech";
 const Copyright = () => {
   return (
-    <Typography variant="body2" color="textSecondary" align="center" style={{ marginTop: "-21px" }}>
-      © {new Date().getFullYear()}
-      {" - "}
-      <Link color="inherit" href="#">
-        { nomeEmpresa } - v { versionSystem }
-      </Link>
+    <Typography variant="body2" color="primary" align="center">
+      {"Copyright "}
+      <Link color="primary" href="#">
+        PLW
+      </Link>{" "}
+      {new Date().getFullYear()}
       {"."}
     </Typography>
   );
 };
+
 const useStyles = makeStyles((theme) => ({
-  container: {
-    position: "relative",
-    background: `url(${bk}) center/cover no-repeat`,
+  root: {
+    width: "100vw",
+    height: "100vh",
+    background: "linear-gradient(to right, #0000FF , #0000CD , #00008B)",
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "100% 100%",
+    backgroundPosition: "center",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    height: "100vh",
+    textAlign: "center",
   },
+
   paper: {
-    backgroundColor: theme.palette.type === 'dark' ? "rgba(0, 0, 0, 0.8)" : "rgba(255, 255, 255, 0.8)", // Fundo semi-transparente
-    borderRadius: "35px",
-    padding: theme.spacing(2),
+    backgroundColor: theme.palette.login, //DARK MODE PLW DESIGN//
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    border: "6px solid transparent", // Adiciona uma borda transparente
-    boxShadow: "0 0 180px rgba(0, 0, 0, 0.3)", // Adiciona um efeito de sombra azul
+    padding: "55px 30px",
+    borderRadius: "12.5px",
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
   },
   form: {
-    width: "100%",
+    width: "80%", // Fix IE 11 issue.
     marginTop: theme.spacing(1),
+    paddingTop: "20px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   submit: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: "20px",
-    padding: "10px 20px",
-    fontSize: "1.2em",
-  },
-  logo: {
-    marginBottom: theme.spacing(4),
-    width: "200px",
-    height: "auto",
-  },
-  passwordIcon: {
-    cursor: "pointer",
-  },
-  whatsappButton: {
-    position: "fixed",
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
-    backgroundColor: "#25d366",
-    "&:hover": {
-      backgroundColor: "#128c7e",
+    "&.MuiButton-root": {
+      margin: "20px 0px 16px",
+      backgroundColor: "rgb(52, 137, 255)",
+      borderRadius: " 30px",
     },
+    "&:hover": {
+      backgroundColor: "#285ec9",
+      // boxShadow: "none",
+    },
+
+    backgroundColor: "rgb(52, 137, 255)",
+    margin: theme.spacing(3, 0, 2),
+    WebkitTextFillColor: "#FFF",
+    width: "50%",
   },
-  whatsappIcon: {
-    fontSize: 40,
-    color: "#fff",
+  powered: {
+    color: "white",
+  },
+  input: {
+    "& .MuiOutlinedInput-root": {
+      position: "relative",
+      borderRadius: "30px",
+    },
   },
 }));
 
@@ -92,7 +90,6 @@ const Login = () => {
   const classes = useStyles();
 
   const [user, setUser] = useState({ email: "", password: "" });
-  const [showPassword, setShowPassword] = useState(false);
 
   const { handleLogin } = useContext(AuthContext);
 
@@ -100,100 +97,133 @@ const Login = () => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handlSubmit = (e) => {
     e.preventDefault();
     handleLogin(user);
   };
 
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
   return (
-    <div className={classes.container}>
-      <img src={logo} alt="Logo da Empresa" className={classes.logo} />
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <div className={classes.paper}>
-          <Typography component="h1" variant="h5">
-            Faça login na sua conta
-          </Typography>
-          <form className={classes.form} noValidate onSubmit={handleSubmit}>
+    <div className="geral">
+      <CssBaseline />
+      <div className={"container-login"}>
+        <div className={"container-img"}>
+          <img alt={"Logo"} src={logo} className="img-login"></img>
+        </div>
+        <div className="container-footer">
+          <p>
+            Copyright ©{" "}
+            <a href={"#"} target={"_blank"}>
+              Equipechat{""}
+            </a>{" "}
+            2024{" "}
+          </p>
+          <p>
+            This site is protected by reCAPTCHA Enterprise and the Google{" "}
+            <a href={"https://policies.google.com/privacy"} target={"_blank"}>
+              Privacy Policy
+            </a>{" "}
+            and{" "}
+            <a href={"https://policies.google.com/terms"} target={"_blank"}>
+              Terms of Service
+            </a>
+          </p>
+        </div>
+      </div>
+      <div className={"container-right"}>
+        <div className={"box"}>
+          <div className={"container-header-box"}>
+            <Link
+              // variant="body2"
+              component={RouterLink}
+              className={"link-create-count"}
+              tabIndex={0}
+              role={"button"}
+              aria-disabled={"false"}
+              to="/signup"
+              style={{ textDecoration: "none" }}
+            >
+              <span className={"label-text"}>Criar conta</span>
+            </Link>
+            <a
+              className={"link-enter"}
+              tabIndex={0}
+              role={"button"}
+              aria-disabled={"false"}
+              to="/login"
+              style={{ textDecoration: "none" }}
+            >
+              <span>Entrar</span>
+            </a>
+          </div>
+          <form className={classes.form} noValidate onSubmit={handlSubmit}>
             <TextField
+              className={classes.input}
               variant="outlined"
-              margin="normal"
+              margin="dense"
               required
               fullWidth
               id="email"
-              label="Email"
+              label={i18n.t("login.form.email")}
               name="email"
-              autoComplete="email"
-              autoFocus
               value={user.email}
               onChange={handleChangeInput}
+              autoComplete="email"
+              autoFocus
+              inputProps={{
+                style: {
+                  borderRadius: "50px",
+                  height: "30px",
+                  padding: "12px",
+                  backgroundColor: "#E8F0FE",
+                },
+              }}
             />
             <TextField
+              className={classes.input}
               variant="outlined"
-              margin="normal"
+              margin="dense"
               required
               fullWidth
               name="password"
-              label="Senha"
-              type={showPassword ? "text" : "password"}
+              label={i18n.t("login.form.password")}
+              type="password"
               id="password"
-              autoComplete="current-password"
               value={user.password}
               onChange={handleChangeInput}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      className={classes.passwordIcon}
-                      onClick={toggleShowPassword}
-                    >
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
+              autoComplete="current-password"
+              inputProps={{
+                style: {
+                  borderRadius: "50px",
+                  height: "30px",
+                  padding: "12px",
+                  backgroundColor: "#E8F0FE",
+                },
               }}
             />
-           <Grid container justify="flex-end">
-  <Grid item xs={6} style={{ textAlign: "right" }}>
-    <Link component={RouterLink} to="/forgetpsw" variant="body2">
-      Esqueceu sua senha?
-    </Link>
-  </Grid>
-</Grid>
             <Button
-  type="submit"
-  fullWidth
-  variant="contained"
-  color="primary"
-  style={{ borderRadius: "10px", padding: "5px 12px", fontSize: "1em", marginTop: "20px" }}
->
-  Entrar
-</Button>
-<Grid container justify="center" style={{ marginTop: "20px" }}>
-  <Grid item>
-    <Link component={RouterLink} to="/signup" variant="body2">
-      {"Não tem uma conta? Registre-se"}
-    </Link>
-  </Grid>
-  <Box mt={8}><Copyright /></Box>
-</Grid>
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              {i18n.t("login.buttons.submit")}
+            </Button>
           </form>
-          
+          <div className={"container-footer-form"}>
+            <p>
+              Ao prosseguir, você concorda com nossos{" "}
+              <a className={"termo"} href={"/term"} target={"_blank"}>
+                Termos de Serviço{""}
+              </a>{" "}
+              e{" "}
+              <a className={"politica"} href={"/privacy"} target={"_blank"}>
+                Política de Privacidade
+              </a>
+            </p>
+          </div>
         </div>
-      </Container>
-      <IconButton
-        href={`https://wa.me/${process.env.REACT_APP_NUMBER_SUPPORT}`}
-        className={classes.whatsappButton}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <WhatsAppIcon className={classes.whatsappIcon} />
-      </IconButton>
-      
+      </div>
     </div>
   );
 };
