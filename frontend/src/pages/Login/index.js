@@ -113,7 +113,7 @@ const Login = () => {
           <p>
             Copyright ©{" "}
             <a href={"#"} target={"_blank"}>
-              Equipechat{""}
+              Vb Sender{""}
             </a>{" "}
             2024{" "}
           </p>
