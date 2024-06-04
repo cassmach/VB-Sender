@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import * as Yup from "yup";
 import { Formik, Form, Field } from "formik";
 import { toast } from "react-toastify";
-import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 
 import { makeStyles } from "@material-ui/core/styles";
 import { green } from "@material-ui/core/colors";
-import UniqueQueueSelect from "../QueueSelect/uniqueQueueSelect";
 
 import {
   Dialog,
@@ -19,6 +17,10 @@ import {
   Switch,
   FormControlLabel,
   Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 
 import api from "../../services/api";
@@ -30,7 +32,6 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
     flexWrap: "wrap",
-    gap: 4,
   },
 
   multFieldLine: {
@@ -59,15 +60,9 @@ const SessionSchema = Yup.object().shape({
     .min(2, "Too Short!")
     .max(50, "Too Long!")
     .required("Required"),
-  maxUseBotQueues: Yup.string().required("Required"),
 });
 
 const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
-  const inputFileRef = useRef(null);
-
-  const [attachment, setAttachment] = useState(null);
-  const [attachmentName, setAttachmentName] = useState("");
-
   const classes = useStyles();
   const initialState = {
     name: "",
@@ -77,30 +72,32 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
     ratingMessage: "",
     isDefault: false,
     token: "",
-    maxUseBotQueues: "",
     provider: "beta",
+    //timeSendQueue: 0,
+    //sendIdQueue: 0,
+    expiresInactiveMessage: "",
     expiresTicket: 0,
+    timeUseBotQueues: 0,
+    maxUseBotQueues: 3
   };
   const [whatsApp, setWhatsApp] = useState(initialState);
   const [selectedQueueIds, setSelectedQueueIds] = useState([]);
-  const [selectedQueueId, setSelectedQueueId] = useState(null);
-
-  useEffect(() => {
+  const [queues, setQueues] = useState([]);
+  const [selectedQueueId, setSelectedQueueId] = useState(null)
+  const [selectedPrompt, setSelectedPrompt] = useState(null);
+  const [prompts, setPrompts] = useState([]);
+  
+    useEffect(() => {
     const fetchSession = async () => {
       if (!whatsAppId) return;
 
       try {
         const { data } = await api.get(`whatsapp/${whatsAppId}?session=0`);
         setWhatsApp(data);
-        try {
-          setAttachmentName(JSON.parse(data.greetingMediaAttachment));
-        } catch (err) {
-          setAttachmentName([data.greetingMediaAttachment]);
-        }
 
         const whatsQueueIds = data.queues?.map((queue) => queue.id);
-        setSelectedQueueId(data.maxUseBotQueueId)
         setSelectedQueueIds(whatsQueueIds);
+		setSelectedQueueId(data.transferQueueId);
       } catch (err) {
         toastError(err);
       }
@@ -108,73 +105,64 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
     fetchSession();
   }, [whatsAppId]);
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await api.get("/prompt");
+        setPrompts(data.prompts);
+      } catch (err) {
+        toastError(err);
+      }
+    })();
+  }, [whatsAppId]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await api.get("/queue");
+        setQueues(data);
+      } catch (err) {
+        toastError(err);
+      }
+    })();
+  }, []);
+
   const handleSaveWhatsApp = async (values) => {
-    const whatsappData = { ...values, queueIds: selectedQueueIds, maxUseBotQueueId: selectedQueueId};
+const whatsappData = {
+      ...values, queueIds: selectedQueueIds, transferQueueId: selectedQueueId,
+      promptId: selectedPrompt ? selectedPrompt : null
+    };
     delete whatsappData["queues"];
     delete whatsappData["session"];
-    const localAttachmentName = attachmentName;
-    if (attachment != null) {
-      localAttachmentName.push(attachment.name);
-    }
-    whatsappData.greetingMediaAttachment = JSON.stringify(localAttachmentName);
 
     try {
-      console.log("attachment", attachment);
-      console.log("whatsappData", whatsappData);
       if (whatsAppId) {
         await api.put(`/whatsapp/${whatsAppId}`, whatsappData);
-        if (attachment != null) {
-          const formData = new FormData();
-          formData.append("file", attachment);
-          await api.post(`/whatsapp/${whatsAppId}/media-upload`, formData);
-        }
-        if (!attachmentName && whatsApp.greetingMediaAttachment !== null) {
-          //await api.delete(`/whatsapp/${whatsAppId}/media-upload`);
-        }
       } else {
-        const { data } = await api.post("/whatsapp", whatsappData);
-        if (attachment != null) {
-          const formData = new FormData();
-          formData.append("file", attachment);
-          //await api.post(`/whatsapp/${data.id}/media-upload`, formData);
-        }
+        await api.post("/whatsapp", whatsappData);
       }
       toast.success(i18n.t("whatsappModal.success"));
       handleClose();
-    } catch {}
+    } catch (err) {
+      toastError(err);
+    }
+  };
+
+  const handleChangeQueue = (e) => {
+    setSelectedQueueIds(e);
+    setSelectedPrompt(null);
+  };
+
+  const handleChangePrompt = (e) => {
+    setSelectedPrompt(e.target.value);
+    setSelectedQueueIds([]);
   };
 
   const handleClose = () => {
     onClose();
-    try {
-      setWhatsApp(initialState);
-      inputFileRef.current.value = null;
-      setAttachment(null);
-    } catch (error) {
-
-    }
-  };
-
-  const handleFileUpload = () => {
-    const file = inputFileRef.current.files[0];
-    setAttachment(file);
-    let currentAttachment = attachmentName;
-    if (currentAttachment) {
-      currentAttachment.push(file.name);
-    } else {
-      currentAttachment = [file.name];
-    }
-    setAttachmentName(currentAttachment);
-    inputFileRef.current.value = null;
-  };
-
-  const handleDeleFile = (index) => {
-    const currentAttachment =
-      attachmentName instanceof Array ? attachmentName : [attachmentName];
-    currentAttachment.splice(index, 1);
-    console.log("currentAttachment", currentAttachment);
-    setAttachment(null);
-    setAttachmentName([...currentAttachment]);
+    setWhatsApp(initialState);
+	  setSelectedQueueId(null);
+    setSelectedQueueIds([]);
   };
 
   return (
@@ -182,7 +170,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
       <Dialog
         open={open}
         onClose={handleClose}
-        maxWidth="sm"
+        maxWidth="md"
         fullWidth
         scroll="paper"
       >
@@ -205,7 +193,6 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
           {({ values, touched, errors, isSubmitting }) => (
             <Form>
               <DialogContent dividers>
-                {/* NOME E PADRAO */}
                 <div className={classes.multFieldLine}>
                   <Grid spacing={2} container>
                     <Grid item>
@@ -234,55 +221,15 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                         label={i18n.t("whatsappModal.form.default")}
                       />
                     </Grid>
-                    {/*<Grid item>
-                      <Field
-                        as={TextField}
-                        label={"Encerrar chat após x horas"}
-                        name="expiresTicket"
-                        error={
-                          touched.expiresTicket && Boolean(errors.expiresTicket)
-                        }
-                        helperText={
-                          touched.expiresTicket && errors.expiresTicket
-                        }
-                        variant="outlined"
-                        margin="dense"
-                        className={classes.textFieldTime}
-                      />
-                      </Grid>*/}
                   </Grid>
                 </div>
-                {attachmentName && (
-                  <>
-                    {attachmentName?.map((file, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          display: "flex",
-                          flexDirection: "row-reverse",
-                        }}
-                      >
-                        <Button
-                          variant="outlined"
-                          color="primary"
-                          endIcon={<DeleteOutlineIcon />}
-                          onClick={() => handleDeleFile(index)}
-                        >
-                          {file}
-                        </Button>
-                      </div>
-                    ))}
-                  </>
-                )}
-
-                {/* MENSAGEM DE SAUDAÇÃO */}
                 <div>
                   <Field
                     as={TextField}
-                    label={i18n.t("whatsappModal.form.greetingMessage")}
+                    label={i18n.t("queueModal.form.greetingMessage")}
                     type="greetingMessage"
                     multiline
-                    minRows={4} // Usando a propriedade sugerida `minRows`
+                    rows={4}
                     fullWidth
                     name="greetingMessage"
                     error={
@@ -295,37 +242,13 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                     margin="dense"
                   />
                 </div>
-                {/*<div
-                  style={{ display: "flex", flexDirection: "column-reverse" }}
-                >
-                  <label
-                    htmlFor="fileUpload"
-                    style={{
-                      cursor: "pointer",
-                      color: "blue",
-                      textDecoration: "underline",
-                    }}
-                  >
-                    Escolher arquivo
-                  </label>
-                  <input
-                    type="file"
-                    accept="video/*,image/*,audio/*"
-                    id="fileUpload"
-                    ref={inputFileRef}
-                    style={{ display: "none" }}
-                    onChange={handleFileUpload}
-                  />
-                </div>*/}
-
-                {/* MENSAGEM DE CONCLUSÃO */}
                 <div>
                   <Field
                     as={TextField}
-                    label={i18n.t("whatsappModal.form.complationMessage")}
+                    label={i18n.t("queueModal.form.complationMessage")}
                     type="complationMessage"
                     multiline
-                    minRows={4}
+                    rows={4}
                     fullWidth
                     name="complationMessage"
                     error={
@@ -339,15 +262,13 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                     margin="dense"
                   />
                 </div>
-
-                {/* MENSAGEM DE FORA DE EXPEDIENTE */}
                 <div>
                   <Field
                     as={TextField}
-                    label={i18n.t("whatsappModal.form.outOfHoursMessage")}
+                    label={i18n.t("queueModal.form.outOfHoursMessage")}
                     type="outOfHoursMessage"
                     multiline
-                    minRows={4}
+                    rows={4}
                     fullWidth
                     name="outOfHoursMessage"
                     error={
@@ -361,12 +282,27 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                     margin="dense"
                   />
                 </div>
-
-                {/* TOKEN */}
                 <div>
                   <Field
                     as={TextField}
-                    label={i18n.t("whatsappModal.form.token")}
+                    label={i18n.t("queueModal.form.ratingMessage")}
+                    type="ratingMessage"
+                    multiline
+                    rows={4}
+                    fullWidth
+                    name="ratingMessage"
+                    error={
+                      touched.ratingMessage && Boolean(errors.ratingMessage)
+                    }
+                    helperText={touched.ratingMessage && errors.ratingMessage}
+                    variant="outlined"
+                    margin="dense"
+                  />
+                </div>
+                <div>
+                  <Field
+                    as={TextField}
+                    label={i18n.t("queueModal.form.token")}
                     type="token"
                     fullWidth
                     name="token"
@@ -374,58 +310,112 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                     margin="dense"
                   />
                 </div>
-
-                {/* QUANTIDADE MÁXIMA DE VEZES QUE O CHATBOT VAI SER ENVIADO */}
-                <div>
-                  <Field
-                    as={TextField}
-                    label={i18n.t("whatsappModal.form.maxUseBotQueues")}
-                    type="number" // Defina o tipo como "number" para aceitar apenas números
-                    fullWidth
-                    name="maxUseBotQueues"
-                    variant="outlined"
-                    margin="dense"
-                    error={
-                      touched.maxUseBotQueues && Boolean(errors.maxUseBotQueues)
-                    }
-                    helperText={
-                      touched.maxUseBotQueues && errors.maxUseBotQueues
-                    }
-                  />
-                </div>
-
-                <div>
-                  <UniqueQueueSelect
-                    selectedQueueId={selectedQueueId}
-                    onChange={(selectedId) => {
-                      setSelectedQueueId(selectedId)
-                    }}
-                    label={i18n.t("whatsappModal.form.maxUseBotQueuesRedirect")}
-                  />
-                </div>
-
-                {/* ENCERRAR CHATS ABERTOS APÓS X HORAS */}
-                <div>
-                  <Field
-                    as={TextField}
-                    label={i18n.t("whatsappModal.form.expiresTicket")}
-                    type="expiresTicket"
-                    fullWidth
-                    name="expiresTicket"
-                    variant="outlined"
-                    margin="dense"
-                    error={
-                      touched.expiresTicket && Boolean(errors.expiresTicket)
-                    }
-                    helperText={touched.expiresTicket && errors.expiresTicket}
-                  />
-                </div>
-
-                {/*  */}
                 <QueueSelect
                   selectedQueueIds={selectedQueueIds}
-                  onChange={(selectedIds) => setSelectedQueueIds(selectedIds)}
+                  onChange={(selectedIds) => handleChangeQueue(selectedIds)}
                 />
+                <FormControl
+                  margin="dense"
+                  variant="outlined"
+                  fullWidth
+                >
+                  <InputLabel>
+                    {i18n.t("whatsappModal.form.prompt")}
+                  </InputLabel>
+                  <Select
+                    labelId="dialog-select-prompt-label"
+                    id="dialog-select-prompt"
+                    name="promptId"
+                    value={selectedPrompt || ""}
+                    onChange={handleChangePrompt}
+                    label={i18n.t("whatsappModal.form.prompt")}
+                    fullWidth
+                    MenuProps={{
+                      anchorOrigin: {
+                        vertical: "bottom",
+                        horizontal: "left",
+                      },
+                      transformOrigin: {
+                        vertical: "top",
+                        horizontal: "left",
+                      },
+                      getContentAnchorEl: null,
+                    }}
+                  >
+                    {prompts.map((prompt) => (
+                      <MenuItem
+                        key={prompt.id}
+                        value={prompt.id}
+                      >
+                        {prompt.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <div>
+                  <h3>{i18n.t("whatsappModal.form.queueRedirection")}</h3>
+                  <p>{i18n.t("whatsappModal.form.queueRedirectionDesc")}</p>
+				<Grid container spacing={2}>
+                  <Grid item sm={6} >
+                    <Field
+                      fullWidth
+                      type="number"
+                      as={TextField}
+                      label='Transferir após x (minutos)'
+                      name="timeToTransfer"
+                      error={touched.timeToTransfer && Boolean(errors.timeToTransfer)}
+                      helperText={touched.timeToTransfer && errors.timeToTransfer}
+                      variant="outlined"
+                      margin="dense"
+                      className={classes.textField}
+                      InputLabelProps={{ shrink: values.timeToTransfer ? true : false }}
+                    />
+
+                  </Grid>
+
+                  <Grid item sm={6}>
+                    <QueueSelect
+                      selectedQueueIds={selectedQueueId}
+                      onChange={(selectedId) => {
+                        setSelectedQueueId(selectedId)
+                      }}
+                      multiple={false}
+                      title={'Fila de Transferência'}
+                    />
+                  </Grid>
+
+                  </Grid>
+                  <Grid spacing={2} container>
+                    {/* ENCERRAR CHATS ABERTOS APÓS X HORAS */}
+                    <Grid xs={12} md={12} item>
+                      <Field
+                        as={TextField}
+                        label={i18n.t("whatsappModal.form.expiresTicket")}
+                        fullWidth
+                        name="expiresTicket"
+                        variant="outlined"
+                        margin="dense"
+                        error={touched.expiresTicket && Boolean(errors.expiresTicket)}
+                        helperText={touched.expiresTicket && errors.expiresTicket}
+                      />
+                    </Grid>
+                  </Grid>
+                  {/* MENSAGEM POR INATIVIDADE*/}
+                  <div>
+                    <Field
+                      as={TextField}
+                      label={i18n.t("whatsappModal.form.expiresInactiveMessage")}
+                      multiline
+                      rows={4}
+                      fullWidth
+                      name="expiresInactiveMessage"
+                      error={touched.expiresInactiveMessage && Boolean(errors.expiresInactiveMessage)}
+                      helperText={touched.expiresInactiveMessage && errors.expiresInactiveMessage}
+                      variant="outlined"
+                      margin="dense"
+                    />
+                  </div>
+                </div>
               </DialogContent>
               <DialogActions>
                 <Button

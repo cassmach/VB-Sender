@@ -17,7 +17,7 @@ import { ReplyMessageProvider } from "../../context/ReplyingMessage/ReplyingMess
 import toastError from "../../errors/toastError";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import { TagsContainer } from "../TagsContainer";
-import { socketConnection } from "../../services/socket";
+import { SocketContext } from "../../context/Socket/SocketContext";
 
 const drawerWidth = 320;
 
@@ -68,21 +68,23 @@ const Ticket = () => {
   const [contact, setContact] = useState({});
   const [ticket, setTicket] = useState({});
 
+  const socketManager = useContext(SocketContext);
+
   useEffect(() => {
     setLoading(true);
     const delayDebounceFn = setTimeout(() => {
       const fetchTicket = async () => {
         try {
           const { data } = await api.get("/tickets/u/" + ticketId);
-          // const { queueId } = data;
-          // const { queues, profile } = user;
+          const { queueId } = data;
+          const { queues, profile } = user;
 
-          // const queueAllowed = queues.find((q) => q.id === queueId);
-          // if (queueAllowed === undefined && profile !== "admin") {
-          //   toast.error("Acesso não permitido");
-          //   history.push("/tickets");
-          //   return;
-          // }
+          const queueAllowed = queues.find((q) => q.id === queueId);
+          if (queueAllowed === undefined && profile !== "admin") {
+            toast.error("Acesso não permitido");
+            history.push("/tickets");
+            return;
+          }
 
           setContact(data.contact);
           setTicket(data);
@@ -99,16 +101,16 @@ const Ticket = () => {
 
   useEffect(() => {
     const companyId = localStorage.getItem("companyId");
-    const socket = socketConnection({ companyId });
+    const socket = socketManager.getSocket(companyId);
 
-    socket.on("connect", () => socket.emit("joinChatBox", `${ticket.id}`));
+    socket.on("ready", () => socket.emit("joinChatBox", `${ticket.id}`));
 
     socket.on(`company-${companyId}-ticket`, (data) => {
-      if (data.action === "update") {
+      if (data.action === "update" && data.ticket.id === ticket.id) {
         setTicket(data.ticket);
       }
 
-      if (data.action === "delete") {
+      if (data.action === "delete" && data.ticketId === ticket.id) {
         toast.success("Ticket deleted sucessfully.");
         history.push("/tickets");
       }
@@ -128,7 +130,7 @@ const Ticket = () => {
     return () => {
       socket.disconnect();
     };
-  }, [ticketId, ticket, history]);
+  }, [ticketId, ticket, history, socketManager]);
 
   const handleDrawerOpen = () => {
     setDrawerOpen(true);

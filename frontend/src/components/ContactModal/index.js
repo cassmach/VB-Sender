@@ -16,7 +16,6 @@ import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import Switch from "@material-ui/core/Switch";
 
 import { i18n } from "../../translate/i18n";
 
@@ -70,7 +69,6 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 		name: "",
 		number: "",
 		email: "",
-		disableBot: false,
 	};
 
 	const [contact, setContact] = useState(initialState);
@@ -94,6 +92,7 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 			try {
 				const { data } = await api.get(`/contacts/${contactId}`);
 				if (isMounted.current) {
+					console.log(data)
 					setContact(data);
 				}
 			} catch (err) {
@@ -169,7 +168,7 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 									name="number"
 									error={touched.number && Boolean(errors.number)}
 									helperText={touched.number && errors.number}
-									placeholder="5513912344321"
+									placeholder="5541998608485"
 									variant="outlined"
 									margin="dense"
 								/>
@@ -186,25 +185,12 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 										variant="outlined"
 									/>
 								</div>
-
 								<Typography
 									style={{ marginBottom: 8, marginTop: 12 }}
 									variant="subtitle1"
 								>
-									<Switch
-										size="small"
-										checked={contact.disableBot}
-										onChange={() =>
-											setContact({ ...contact, disableBot: !contact.disableBot })
-										}
-										name="showAllTickets"
-										color="primary"
-									/>
-									Desabilitar chatbot para esse contato
+									{i18n.t("contactModal.form.whatsapp")} {contact?.whatsapp ? contact?.whatsapp.name : ""}
 								</Typography>
-
-
-
 								<Typography
 									style={{ marginBottom: 8, marginTop: 12 }}
 									variant="subtitle1"

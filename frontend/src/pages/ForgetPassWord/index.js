@@ -24,49 +24,30 @@ import logo from "../../assets/logo.png";
 import { toast } from 'react-toastify'; 
 import toastError from '../../errors/toastError';
 import 'react-toastify/dist/ReactToastify.css';
-import bk from "../../assets/bk.jpg";
-import { versionSystem } from "../../../package.json";
-import { nomeEmpresa } from "../../../package.json";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
-
-const Copyright = () => {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center" style={{ marginTop: "-21px" }}>
-      © {new Date().getFullYear()}
-      {" - "}
-      <Link color="inherit" href="#">
-        { nomeEmpresa } - v { versionSystem }
-      </Link>
-      {"."}
-    </Typography>
-  );
-};
-const randomImageURL = "https://source.unsplash.com/random/?tech";
-const useStyles = makeStyles(theme => ({
-    root: {
-        width: "100vw",
-        height: "100vh",
-        backgroundImage: `url(${bk})`,
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        textAlign: "center",
-    },
-    paper: {
-        backgroundColor: theme.palette.type === 'dark' ? "rgba(0, 0, 0, 0.8)" : "rgba(255, 255, 255, 0.8)", // Fundo semi-transparente
-        borderRadius: "35px",
-        padding: theme.spacing(2),
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        border: "6px solid transparent", // Adiciona uma borda transparente
-        boxShadow: "0 0 180px rgba(0, 0, 0, 0.3)", // Adiciona um efeito de sombra azul
-        
-      },
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: "100vw",
+    height: "100vh",
+    background: "black", //Cor de fundo
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "100% 100%",
+    backgroundPosition: "center",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+  },
+  paper: {
+    backgroundColor: "white",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: "55px 30px",
+    borderRadius: "12.5px",
+  },
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
@@ -80,11 +61,6 @@ const useStyles = makeStyles(theme => ({
   },
   powered: {
     color: "white",
-  },
-  logo: {
-    marginBottom: theme.spacing(4), // Espaço entre o logo e o título
-    width: "220px", // ou a largura desejada
-    height: "auto", // ou a altura desejada
   },
 }));
 
@@ -138,7 +114,7 @@ const handleSendEmail = async (values) => {
     if (response.data.status === 404) {
       toast.error("Email não encontrado");
     } else {
-      toast.success(i18n.t("Email não encontrado"));
+      toast.success(i18n.t("Email enviado com sucesso!"));
     }
   } catch (err) {
     console.log("API Error:", err);
@@ -159,7 +135,7 @@ const handleSendEmail = async (values) => {
         );
         setError(""); // Limpe o erro se não houver erro
         toast.success(i18n.t("Senha redefinida com sucesso."));
-        history.push("/");
+        history.push("/login");
       } catch (err) {
         console.log(err);
       }
@@ -188,15 +164,16 @@ const handleSendEmail = async (values) => {
 
   return (
     <div className={classes.root}>
-      
-      <div className={classes.imageContainer}>
-      <img src={logo} alt="Logo da Empresa" className={classes.logo} />
-                            <div className={classes.logoShadow}></div>
-                        </div>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
-          
+          <div>
+            <img
+              style={{ margin: "0 auto", height: "80px", width: "100%" }}
+              src={logo}
+              alt="Whats"
+            />
+          </div>
           <Typography component="h1" variant="h5">
             {i18n.t("Redefinir senha")}
           </Typography>
@@ -344,7 +321,6 @@ const handleSendEmail = async (values) => {
                     fullWidth
                     variant="contained"
                     color="primary"
-                    style={{ borderRadius: "10px", padding: "5px 12px", fontSize: "1em", marginTop: "20px" }}
                     className={classes.submit}
                   >
                     Enviar Email
@@ -362,30 +338,15 @@ const handleSendEmail = async (values) => {
                     </Link>
                   </Grid>
                 </Grid>
-                <Grid container justify="flex-end">
-                                        <Grid item>
-                                            <Link
-                                                href="#"
-                                                variant="body2"
-                                                component={RouterLink}
-                                                to="/login"
-                                            >
-                                                {i18n.t("signup.buttons.login")}
-                                            </Link>
-                                        </Grid>
-                                    </Grid>
                 {error && (
                   <Typography variant="body2" color="error">
                     {error}
                   </Typography>
                 )}
-                 <Box mt={8}><Copyright /></Box>
               </Form>
-              
             )}
           </Formik>
         </div>
-        
         <Box mt={5} />
       </Container>
     </div>

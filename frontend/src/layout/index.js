@@ -33,11 +33,10 @@ import toastError from "../errors/toastError";
 import AnnouncementsPopover from "../components/AnnouncementsPopover";
 
 import logo from "../assets/logo.png";
-import { socketConnection } from "../services/socket";
+import { SocketContext } from "../context/Socket/SocketContext";
 import ChatPopover from "../pages/Chat/ChatPopover";
 
 import { useDate } from "../hooks/useDate";
-import UserLanguageSelector from "../components/UserLanguageSelector";
 
 import ColorModeContext from "../layout/themeContext";
 import Brightness4Icon from '@material-ui/icons/Brightness4';
@@ -54,8 +53,9 @@ const useStyles = makeStyles((theme) => ({
     },
     backgroundColor: theme.palette.fancyBackground,
     '& .MuiButton-outlinedPrimary': {
-      color: theme.mode === 'light' ? '#10677F' : '#FFF',
-      border: theme.mode === 'light' ? '1px solid rgba(0 124 102)' : '1px solid rgba(255, 255, 255, 0.5)',
+      color: theme.mode === 'light' ? '#FFF' : '#FFF',
+	  backgroundColor: theme.mode === 'light' ? '#10677F' : '#1c1c1c',
+      //border: theme.mode === 'light' ? '1px solid rgba(0 124 102)' : '1px solid rgba(255, 255, 255, 0.5)',
     },
     '& .MuiTab-textColorPrimary.Mui-selected': {
       color: theme.mode === 'light' ? '#10677F' : '#FFF',
@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   toolbar: {
-    paddingRight: 24,
+    paddingRight: 24, // keep right padding when drawer closed
     color: theme.palette.dark.main,
     background: theme.palette.barraSuperior,
   },
@@ -141,6 +141,7 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flex: 1,
     overflow: "auto",
+
   },
   container: {
     paddingTop: theme.spacing(4),
@@ -241,9 +242,11 @@ const LoggedInLayout = ({ children, themeToggle }) => {
   // }, []);
   //##############################################################################
 
+  const socketManager = useContext(SocketContext);
+
   useEffect(() => {
-    if (document.body.offsetWidth > 600) {
-      setDrawerOpen(false);
+    if (document.body.offsetWidth > 1200) {
+      setDrawerOpen(true);
     }
   }, []);
 
@@ -259,7 +262,7 @@ const LoggedInLayout = ({ children, themeToggle }) => {
     const companyId = localStorage.getItem("companyId");
     const userId = localStorage.getItem("userId");
 
-    const socket = socketConnection({ companyId });
+    const socket = socketManager.getSocket(companyId);
 
     socket.on(`company-${companyId}-auth`, (data) => {
       if (data.user.id === +userId) {
@@ -280,8 +283,7 @@ const LoggedInLayout = ({ children, themeToggle }) => {
       socket.disconnect();
       clearInterval(interval);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [socketManager]);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -373,7 +375,6 @@ const LoggedInLayout = ({ children, themeToggle }) => {
               classes.menuButton,
               drawerOpen && classes.menuButtonHidden
             )}
-            style={{ color: '#FFF' }}
           >
             <MenuIcon />
           </IconButton>
@@ -392,22 +393,19 @@ const LoggedInLayout = ({ children, themeToggle }) => {
               </>
             ) : (
               <>
-                Olá  <b>{user.name}</b>, Bem Vindo a <b>{user?.company?.name}</b>!
+                Olá  <b>{user.name}</b>, Bem vindo a <b>{user?.company?.name}</b>!
               </>
             )}
           </Typography>
-
-          {/* DESABILITADO POIS TEM BUGS */}
-          { <UserLanguageSelector /> }
 
           <IconButton edge="start" onClick={toggleColorMode}>
             {theme.mode === 'dark' ? <Brightness7Icon style={{ color: "white" }} /> : <Brightness4Icon style={{ color: "white" }} />}
           </IconButton>
 
-          {/*<NotificationsVolume
+          <NotificationsVolume
             setVolume={setVolume}
             volume={volume}
-            />*/}
+          />
 
           <IconButton
             onClick={handleRefreshPage}
@@ -416,8 +414,6 @@ const LoggedInLayout = ({ children, themeToggle }) => {
           >
             <CachedIcon style={{ color: "white" }} />
           </IconButton>
-
-          {/* <DarkMode themeToggle={themeToggle} /> */}
 
           {user.id && <NotificationsPopOver volume={volume} />}
 
@@ -459,7 +455,6 @@ const LoggedInLayout = ({ children, themeToggle }) => {
               </MenuItem>
             </Menu>
           </div>
-
         </Toolbar>
       </AppBar>
       <main className={classes.content}>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { has, isArray } from "lodash";
 
@@ -7,10 +7,8 @@ import { toast } from "react-toastify";
 import { i18n } from "../../translate/i18n";
 import api from "../../services/api";
 import toastError from "../../errors/toastError";
-import { socketConnection } from "../../services/socket";
-import { useDate } from "../../hooks/useDate";
+import { SocketContext } from "../../context/Socket/SocketContext";
 import moment from "moment";
-
 const useAuth = () => {
   const history = useHistory();
   const [isAuth, setIsAuth] = useState(false);
@@ -57,6 +55,8 @@ const useAuth = () => {
     }
   );
 
+  const socketManager = useContext(SocketContext);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     (async () => {
@@ -76,19 +76,22 @@ const useAuth = () => {
 
   useEffect(() => {
     const companyId = localStorage.getItem("companyId");
-    const socket = socketConnection({ companyId });
+    if (companyId) {
+   
+      const socket = socketManager.getSocket(companyId);
 
-    socket.on(`company-${companyId}-user`, (data) => {
-      if (data.action === "update" && data.user.id === user.id) {
-        setUser(data.user);
-      }
-    });
-
+      socket.on(`company-${companyId}-user`, (data) => {
+        if (data.action === "update" && data.user.id === user.id) {
+          setUser(data.user);
+        }
+      });
+    
+    
     return () => {
       socket.disconnect();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }
+  }, [socketManager, user]);
 
   const handleLogin = async (userData) => {
     setLoading(true);
@@ -109,12 +112,7 @@ const useAuth = () => {
       }
 
       moment.locale('pt-br');
-      let dueDate;
-      if (data.user.company.id === 1) {
-        dueDate = '2999-12-31T00:00:00.000Z'
-      } else {
-        dueDate = data.user.company.dueDate;
-      }
+      const dueDate = data.user.company.dueDate;
       const hoje = moment(moment()).format("DD/MM/yyyy");
       const vencimento = moment(dueDate).format("DD/MM/yyyy");
 
@@ -138,15 +136,12 @@ const useAuth = () => {
         history.push("/tickets");
         setLoading(false);
       } else {
-        localStorage.setItem("companyId", companyId);
-        api.defaults.headers.Authorization = `Bearer ${data.token}`;
-        setIsAuth(true);
         toastError(`Opss! Sua assinatura venceu ${vencimento}.
 Entre em contato com o Suporte para mais informações! `);
-        history.push("/financeiro-aberto");
         setLoading(false);
       }
 
+      //quebra linha 
     } catch (err) {
       toastError(err);
       setLoading(false);
