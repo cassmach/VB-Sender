@@ -127,14 +127,9 @@ const SignUp = () => {
         <div className={"paper"}>
           <img src={logo} alt="Whats" className="img-logo-signup" />
 
-          <h4 className="h4">⚡ Cadastre-se</h4>
-          <div>
-            <span className="span">
-              👋🏻 Comece seu <b>teste GRATUITO</b> de 3 dias do Equipechat em
-              apenas 3 etapas!{" "}
-              <b>Não se preocupe, nós não pedimos dados do seu cartão.</b> 💳
-            </span>
-          </div>
+          <h4 className="h4">Cadastre-se</h4>
+          
+           
           {/*<Typography component="h1" variant="h5">
     			{i18n.t("signup.title")}
     		</Typography>*/}
@@ -258,7 +253,7 @@ const SignUp = () => {
                       variant="body1"
                       component={RouterLink}
                       to="/login"
-                      style={{ color: "#3489ff", fontWeight: 500 }}
+                      style={{ color: "#3CB4C9", fontWeight: 500 }}
                     >
                       {i18n.t("signup.buttons.login")}
                     </Link>
@@ -272,7 +267,7 @@ const SignUp = () => {
           <p className="p">
             Copyright ©{" "}
             <a href={"#"} target={"_blank"}>
-              Equipechat{""}
+              VB Sender{""}
             </a>{" "}
             2024{" "}
           </p>

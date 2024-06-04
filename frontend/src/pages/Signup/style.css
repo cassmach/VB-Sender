@@ -42,9 +42,9 @@ body {
   /* max-height: 100vh; */
 }
 .h4 {
-  caret-color: rgb(52, 137, 255);
-  color: rgb(52, 137, 255);
-  column-rule-color: rgb(52, 137, 255);
+  caret-color: #3CB4C9;
+  color: #3CB4C9;
+  column-rule-color: #3CB4C9;
   font-size: 34px;
   line-height: 41.99px;
   margin: 10px 0 25px;
@@ -85,7 +85,7 @@ body {
 .footer a {
   text-decoration: none;
   cursor: pointer;
-  color: #3489ff;
+  color: #3CB4C9;
 }
 .footer a:hover {
   text-decoration: underline;
