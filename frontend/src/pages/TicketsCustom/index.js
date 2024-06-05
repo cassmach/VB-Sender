@@ -6,7 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import TicketsManager from "../../components/TicketsManagerTabs/";
 import Ticket from "../../components/Ticket/";
-import logo from "../../assets/logo.png"; //PLW DESIGN LOGO//
+import logo from "../../assets/logo.png"; 
 import { i18n } from "../../translate/i18n";
 
 const useStyles = makeStyles(theme => ({
@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
 		flexDirection: "column",
 	},
 	welcomeMsg: {
-		backgroundColor: theme.palette.boxticket, //DARK MODE PLW DESIGN//
+		backgroundColor: theme.palette.boxticket,
 		display: "flex",
 		justifyContent: "space-evenly",
 		alignItems: "center",
@@ -63,11 +63,9 @@ const TicketsCustom = () => {
 							</>
 						) : (
 							<Paper square variant="outlined" className={classes.welcomeMsg}>
-							{/* PLW DESIGN LOGO */}
 							<div>
 							<center><img style={{ margin: "0 auto", width: "70%" }} src={logo} alt="logologin" /></center>
 							</div>
-							{/* PLW DESIGN LOGO */}
 							{/*<span>{i18n.t("chat.noTicketMessage")}</span>*/}
 							</Paper>
 						)}

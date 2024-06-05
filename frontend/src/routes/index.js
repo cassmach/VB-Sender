@@ -13,6 +13,7 @@ import Financeiro from "../pages/Financeiro/";
 import Users from "../pages/Users";
 import Contacts from "../pages/Contacts/";
 import Queues from "../pages/Queues/";
+import Blacklist from "../pages/Blacklist";
 import Tags from "../pages/Tags/";
 import MessagesAPI from "../pages/MessagesAPI/";
 import Helps from "../pages/Helps/";
@@ -36,6 +37,7 @@ import Subscription from "../pages/Subscription/";
 import Files from "../pages/Files/";
 import Prompts from "../pages/Prompts";
 import QueueIntegration from "../pages/QueueIntegration";
+import ForgetPassword from "../pages/ForgetPassWord/"; // Reset PassWd
 
 const Routes = () => {
   const [showCampaigns, setShowCampaigns] = useState(false);
@@ -54,6 +56,7 @@ const Routes = () => {
           <Switch>
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={Signup} />
+			<Route exact path="/forgetpsw" component={ForgetPassword} /> 
             {/* <Route exact path="/create-company" component={Companies} /> */}
             <WhatsAppsProvider>
               <LoggedInLayout>
@@ -121,6 +124,7 @@ const Routes = () => {
                   isPrivate
                 />
                 <Route exact path="/queues" component={Queues} isPrivate />
+                <Route exact path="/blacklist" component={Blacklist} isPrivate />
                 <Route
                   exact
                   path="/announcements"

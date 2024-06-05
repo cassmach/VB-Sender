@@ -14,6 +14,7 @@ import TextField from "@material-ui/core/TextField";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
+import InputMask from 'react-input-mask';
 import {
 	FormControl,
 	InputLabel,
@@ -27,6 +28,9 @@ import Container from "@material-ui/core/Container";
 import logo from "../../assets/logo.png";
 import { i18n } from "../../translate/i18n";
 
+import { nomeEmpresa } from "../../../package.json";
+import { versionSystem } from "../../../package.json";
+
 import { openApi } from "../../services/api";
 import toastError from "../../errors/toastError";
 import moment from "moment";
@@ -35,7 +39,7 @@ const Copyright = () => {
 		<Typography variant="body2" color="textSecondary" align="center">
 			{"Copyright © "}
 			<Link color="inherit" href="#">
-				PLW
+				{ nomeEmpresa } - v { versionSystem }
 			</Link>{" "}
 		   {new Date().getFullYear()}
 			{"."}
@@ -167,21 +171,30 @@ const SignUp = () => {
 									/>
 								</Grid>
 								
-								<Grid item xs={12}>
-									<Field
-										as={TextField}
-										variant="outlined"
-										fullWidth
-										id="phone"
-										label="Telefone com (DDD)"
-										name="phone"
-										error={touched.email && Boolean(errors.email)}
-										helperText={touched.email && errors.email}
-										autoComplete="phone"
-										required
-									/>
-								</Grid>
-
+							<Grid item xs={12}>
+								<Field
+									as={InputMask}
+									mask="(99) 99999-9999"
+									variant="outlined"
+									fullWidth
+									id="phone"
+									name="phone"
+									error={touched.phone && Boolean(errors.phone)}
+									helperText={touched.phone && errors.phone}
+									autoComplete="phone"
+									required
+								>
+									{({ field }) => (
+										<TextField
+											{...field}
+											variant="outlined"
+											fullWidth
+											label="DDD988888888"
+											inputProps={{ maxLength: 11 }} // Definindo o limite de caracteres
+										/>
+									)}
+								</Field>
+							</Grid>
 								<Grid item xs={12}>
 									<Field
 										as={TextField}
